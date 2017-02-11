@@ -1,5 +1,5 @@
 struct pfr_detail {
-	int type_id;
+    int type_id;
     int profile_id;
     int detail_id;
     int bsize;

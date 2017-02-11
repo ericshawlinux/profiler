@@ -1,6 +1,6 @@
 struct pfr_type {
-	int   type_id;
-	char  data_type;
+    int   type_id;
+    char  data_type;
     int   nsize;
 };
 
