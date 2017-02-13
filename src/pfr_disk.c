@@ -3,9 +3,8 @@
 
 #include <malloc.h>
 #include <errno.h>
-#ifdef __linux__
 #include <unistd.h>
-#endif
+#include <stdio.h>
 #include <string.h>
 
 int pfr_disk_read(int fd, void *target_struct, int target_size, void **flex_value, int flex_size, const char *err_id)

@@ -6,9 +6,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#ifdef __linux__
-#include <unistd.h>
-#endif
 
 #include "pfr_detail.h"
 #include "pfr_config.h"
