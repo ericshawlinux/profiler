@@ -78,7 +78,7 @@ int pfr_type_delete(const char *type_name, int type_id)
     return 1;
 }
 
-int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
+static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
 {
     int fd = open(PFR_CFG_TYPE_FILE, O_RDONLY | O_CREAT, PFR_CFG_PERMITTED);
 
@@ -104,12 +104,12 @@ int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
     return 1;
 }
 
-int pfr_type_read(int fd, struct pfr_type *target, char **name)
+static int pfr_type_read(int fd, struct pfr_type *target, char **name)
 {
     return pfr_disk_read(fd, target, sizeof(struct pfr_type), (void **) name, target->nsize, "type");
 }
 
-int pfr_type_write(int fd, struct pfr_type source, const char *name)
+static int pfr_type_write(int fd, struct pfr_type source, const char *name)
 {
     return pfr_disk_write(fd, &source, sizeof(source), (void **) name, source.nsize, "type");
 }

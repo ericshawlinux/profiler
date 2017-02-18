@@ -69,7 +69,7 @@ int pfr_detail_delete(struct pfr_detail detail)
     return 1;
 }
 
-int pfr_detail_get_state(struct pfr_detail *detail)
+static int pfr_detail_get_state(struct pfr_detail *detail)
 {
     int fd = open(PFR_CFG_DATA_FILE, O_RDONLY | O_CREAT, PFR_CFG_PERMITTED);
 
@@ -98,17 +98,17 @@ int pfr_detail_get_state(struct pfr_detail *detail)
     return 1;
 }
 
-int pfr_detail_read(int fd, struct pfr_detail *target, void **value)
+static int pfr_detail_read(int fd, struct pfr_detail *target, void **value)
 {
     return pfr_disk_read(fd, target, sizeof(struct pfr_detail), value, target->bsize, "detail");
 }
 
-int pfr_detail_write(int fd, struct pfr_detail source, void *value)
+static int pfr_detail_write(int fd, struct pfr_detail source, void *value)
 {
     return pfr_disk_write(fd, &source, sizeof(source), value, source.bsize, "detail");
 }
 
-int profile_match(struct pfr_detail a, struct pfr_detail b)
+static int profile_match(struct pfr_detail a, struct pfr_detail b)
 {
     if (a.type_id != b.type_id)
         return 0;
