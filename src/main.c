@@ -11,7 +11,17 @@ int pfr_cmd_type_undefine(int argc, const char **argv)
     return 0;
 }
 
+int pfr_cmd_type_show(int argc, const char **argv)
+{
+    return 0;
+}
+
 int pfr_cmd_detail_set(int argc, const char **argv)
+{
+    return 0;
+}
+
+int pfr_cmd_detail_get(int argc, const char **argv)
 {
     return 0;
 }
@@ -29,7 +39,9 @@ struct cmd_struct {
 static struct cmd_struct commands[] = {
     {"def",    pfr_cmd_type_define},
     {"undef",  pfr_cmd_type_undefine},
+    {"show",   pfr_cmd_type_show},
     {"set",    pfr_cmd_detail_set},
+    {"get",    pfr_cmd_detail_get},
     {"help",   pfr_cmd_help}
 };
 
