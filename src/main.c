@@ -1,32 +1,61 @@
 #include <stdio.h>
 #include <string.h>
 
-int pfr_cmd_type_define(int argc, const char **argv)
+#include "pfr_type.c"
+
+#define DATA_TYPE_SIZE 7
+
+static int pfr_cmd_type_define(int argc, const char **argv)
+{
+    if (argc != 4)
+        return 0;
+    
+    char data_type[DATA_TYPE_SIZE];
+    strncpy(data_type, argv[3], DATA_TYPE_SIZE);
+    
+    struct pfr_type type = {0};
+    
+    if (!strcmp(data_type, "text"))
+        type.data_type = 't';
+        
+    else if (!strcmp(data_type, "date"))
+        type.data_type = 'd';
+        
+    else if (!strcmp(data_type, "number"))
+        type.data_type = 'n';
+        
+    else
+        return 0;
+    
+    type.nsize = strlen(argv[2]) + 1;
+    
+    return pfr_type_save(&type, argv[2]);
+}
+
+static int pfr_cmd_type_undefine(int argc, const char **argv)
+{
+    if (argc != 3)
+        return 0;
+    
+    return pfr_type_delete(argv[2], 0);
+}
+
+static int pfr_cmd_type_show(int argc, const char **argv)
 {
     return 0;
 }
 
-int pfr_cmd_type_undefine(int argc, const char **argv)
+static int pfr_cmd_detail_set(int argc, const char **argv)
 {
     return 0;
 }
 
-int pfr_cmd_type_show(int argc, const char **argv)
+static int pfr_cmd_detail_get(int argc, const char **argv)
 {
     return 0;
 }
 
-int pfr_cmd_detail_set(int argc, const char **argv)
-{
-    return 0;
-}
-
-int pfr_cmd_detail_get(int argc, const char **argv)
-{
-    return 0;
-}
-
-int pfr_cmd_help(int argc, const char **argv)
+static int pfr_cmd_help(int argc, const char **argv)
 {
     return 0;
 }
@@ -58,7 +87,7 @@ static struct cmd_struct *get_builtin(const char *s)
     return NULL;
 }
 
-void usage(int argc, const char **argv, struct cmd_struct *cmd)
+static void usage(int argc, const char **argv, struct cmd_struct *cmd)
 {
     printf("usage: %s\n", argv[0]);
 }
