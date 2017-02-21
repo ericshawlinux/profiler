@@ -100,12 +100,12 @@ static int pfr_detail_get_state(struct pfr_detail *detail)
 
 static int pfr_detail_read(int fd, struct pfr_detail *target, void **value)
 {
-    return pfr_disk_read(fd, target, sizeof(struct pfr_detail), value, target->bsize, "detail");
+    return pfr_disk_read(fd, target, sizeof *target, value, target->bsize, "detail");
 }
 
 static int pfr_detail_write(int fd, struct pfr_detail source, void *value)
 {
-    return pfr_disk_write(fd, &source, sizeof(source), value, source.bsize, "detail");
+    return pfr_disk_write(fd, &source, sizeof source, value, source.bsize, "detail");
 }
 
 static int profile_match(struct pfr_detail a, struct pfr_detail b)

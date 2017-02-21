@@ -106,12 +106,12 @@ static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
 
 static int pfr_type_read(int fd, struct pfr_type *target, char **name)
 {
-    return pfr_disk_read(fd, target, sizeof(struct pfr_type), (void **) name, target->nsize, "type");
+    return pfr_disk_read(fd, target, sizeof *target, (void **) name, target->nsize, "type");
 }
 
 static int pfr_type_write(int fd, struct pfr_type source, const char *name)
 {
-    return pfr_disk_write(fd, &source, sizeof(source), (void **) name, source.nsize, "type");
+    return pfr_disk_write(fd, &source, sizeof source, (void **) name, source.nsize, "type");
 }
 
 #endif // pfr_type included

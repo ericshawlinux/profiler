@@ -37,7 +37,7 @@ int pfr_disk_read(int fd, void *target_struct, int target_size, void **flex_valu
     return 1;
 }
 
-int pfr_disk_write(int fd, void *source_struct, int source_size, void *flex_value, int flex_size, const char *err_id)
+int pfr_disk_write(int fd, const void *source_struct, int source_size, const void *flex_value, int flex_size, const char *err_id)
 {
     int write_size_a = 0, write_size_b = 0;
      
