@@ -78,6 +78,29 @@ int pfr_type_delete(const char *type_name, int type_id)
     return 1;
 }
 
+void pfr_type_print()
+{
+    int fd = open(PFR_CFG_TYPE_FILE, O_RDONLY | O_CREAT, PFR_CFG_PERMITTED);
+
+    if (fd == -1) {
+        perror("Error opening type file for reading");
+        return;
+    }
+
+    struct pfr_type itype;
+    char *iname = NULL;
+
+    printf("type_id data_type type_name\n");
+
+    while (pfr_type_read(fd, &itype, &iname))
+        printf("%7d %9c %s\n", itype.type_id, itype.data_type, iname);
+        
+    free(iname);
+
+    close(fd);
+    return;
+}
+
 static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
 {
     int fd = open(PFR_CFG_TYPE_FILE, O_RDONLY | O_CREAT, PFR_CFG_PERMITTED);
@@ -106,7 +129,7 @@ static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
 
 static int pfr_type_read(int fd, struct pfr_type *target, char **name)
 {
-    return pfr_disk_read(fd, target, sizeof *target, (void **) name, target->nsize, "type");
+    return pfr_disk_read(fd, target, sizeof *target, (void **) name, &(target->nsize), "type");
 }
 
 static int pfr_type_write(int fd, struct pfr_type source, const char *name)

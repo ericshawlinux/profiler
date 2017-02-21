@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int pfr_disk_read(int fd, void *target_struct, int target_size, void **flex_value, int flex_size, const char *err_id)
+int pfr_disk_read(int fd, void *target_struct, int target_size, void **flex_value, const int *flex_size, const char *err_id)
 {
     int read_size_a = 0, read_size_b = 0;
     
@@ -19,19 +19,19 @@ int pfr_disk_read(int fd, void *target_struct, int target_size, void **flex_valu
     if (read_size_a != target_size)
         return 0;
     
-    *flex_value = realloc(*flex_value, flex_size);
+    *flex_value = realloc(*flex_value, *flex_size);
     
     if (*flex_value == NULL) {
         fprintf(stderr, "Error allocating memory for %s flexible value: %s\n", err_id, strerror(errno));
         return 0;
     }
     
-    read_size_b = read(fd, *flex_value, flex_size);
+    read_size_b = read(fd, *flex_value, *flex_size);
     
     if (read_size_b == -1)
         fprintf(stderr, "Error reading %s flexible value: %s\n", err_id, strerror(errno));
     
-    if (read_size_b != flex_size)
+    if (read_size_b != *flex_size)
         return 0;
     
     return 1;

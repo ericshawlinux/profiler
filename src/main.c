@@ -42,7 +42,9 @@ static int pfr_cmd_type_undefine(int argc, const char **argv)
 
 static int pfr_cmd_type_show(int argc, const char **argv)
 {
-    return 0;
+    pfr_type_print();
+
+    return 1;
 }
 
 static int pfr_cmd_detail_set(int argc, const char **argv)
