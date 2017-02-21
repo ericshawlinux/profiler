@@ -71,7 +71,7 @@ int pfr_type_delete(const char *type_name, int type_id)
     close(dest);
 
     remove(PFR_CFG_TYPE_FILE);
-    rename(PFR_CFG_TYPE_FILE, PFR_CFG_TYPE_TEMP_FILE);
+    rename(PFR_CFG_TYPE_TEMP_FILE, PFR_CFG_TYPE_FILE);
     
     free(current_name);
     
