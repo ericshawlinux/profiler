@@ -3,8 +3,6 @@
 
 #include <malloc.h>
 #include <string.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <stdio.h>
 
 #include "pfr_detail.h"
@@ -16,28 +14,28 @@ int pfr_detail_save(struct pfr_detail *detail, const void *value)
     if (!pfr_detail_get_state(detail))
         return 0;
     
-    int fd = open(PFR_CFG_DATA_FILE, O_WRONLY | O_APPEND);
+    FILE *fp = fopen(PFR_CFG_DATA_FILE, "ab");
     
-    if (fd == -1) {
+    if (fp == NULL) {
         perror("Error opening detail file for saving");
         return 0;
     }
     
-    if (!pfr_detail_write(fd, *detail, &value)) {
-        close(fd);
+    if (!pfr_detail_write(fp, *detail, &value)) {
+        fclose(fp);
         return 0;
     }
     
-    close(fd);
+    fclose(fp);
     return 1;
 }
 
 int pfr_detail_delete(struct pfr_detail detail)
 {
-	int origin = open(PFR_CFG_DATA_FILE, O_RDONLY | O_CREAT, PFR_CFG_PERMITTED);
-    int dest = open(PFR_CFG_DATA_TEMP_FILE, O_WRONLY | O_CREAT | O_TRUNC, PFR_CFG_PERMITTED);
+    FILE *origin = fopen(PFR_CFG_DATA_FILE, "rb");
+    FILE *dest = fopen(PFR_CFG_DATA_TEMP_FILE, "wb");
 
-    if (origin == -1 || dest == -1) {
+    if (origin == NULL || dest == NULL) {
         perror("Error opening type files");
         return 0;
     }
@@ -52,14 +50,14 @@ int pfr_detail_delete(struct pfr_detail detail)
         
         if (!pfr_detail_write(dest, current_detail, current_value)) {
             free(current_value);
-            close(origin);
-            close(dest);
+            fclose(origin);
+            fclose(dest);
             return 0;
         }
     }
 
-    close(origin);
-    close(dest);
+    fclose(origin);
+    fclose(dest);
 
     remove(PFR_CFG_DATA_FILE);
     rename(PFR_CFG_DATA_FILE, PFR_CFG_DATA_TEMP_FILE);
@@ -71,9 +69,9 @@ int pfr_detail_delete(struct pfr_detail detail)
 
 static int pfr_detail_get_state(struct pfr_detail *detail)
 {
-    int fd = open(PFR_CFG_DATA_FILE, O_RDONLY | O_CREAT, PFR_CFG_PERMITTED);
+    FILE *fp = fopen(PFR_CFG_DATA_FILE, "rb");
 
-    if (fd == -1) {
+    if (fp == NULL) {
         perror("Error opening data file for reading");
         return 0;
     }
@@ -83,7 +81,7 @@ static int pfr_detail_get_state(struct pfr_detail *detail)
     
     detail->detail_id = PFR_CFG_DETAIL_FIRST_ID;
 
-    while (pfr_detail_read(fd, &current_detail, &current_value)) {
+    while (pfr_detail_read(fp, &current_detail, &current_value)) {
         
         if (!profile_match(current_detail, *detail))
             continue;
@@ -94,18 +92,18 @@ static int pfr_detail_get_state(struct pfr_detail *detail)
     
     free(current_value);
 
-    close(fd);
+    fclose(fp);
     return 1;
 }
 
-static int pfr_detail_read(int fd, struct pfr_detail *target, void **value)
+static int pfr_detail_read(FILE *fp, struct pfr_detail *target, void **value)
 {
-    return pfr_disk_read(fd, target, sizeof *target, value, &(target->bsize), "detail");
+    return pfr_disk_read(fp, target, sizeof *target, value, &(target->bsize), "detail");
 }
 
-static int pfr_detail_write(int fd, struct pfr_detail source, void *value)
+static int pfr_detail_write(FILE *fp, struct pfr_detail source, void *value)
 {
-    return pfr_disk_write(fd, &source, sizeof source, value, source.bsize, "detail");
+    return pfr_disk_write(fp, &source, sizeof source, value, source.bsize, "detail");
 }
 
 static int profile_match(struct pfr_detail a, struct pfr_detail b)

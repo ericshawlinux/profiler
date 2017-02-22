@@ -3,21 +3,19 @@
 
 #include <malloc.h>
 #include <errno.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 
-int pfr_disk_read(int fd, void *target_struct, int target_size, void **flex_value, const int *flex_size, const char *err_id)
+int pfr_disk_read(FILE *fp, void *target_struct, int target_size, void **flex_value, const int *flex_size, const char *err_id)
 {
     int read_size_a = 0, read_size_b = 0;
     
-    read_size_a = read(fd, target_struct, target_size);
+    read_size_a = fread(target_struct, 1, target_size, fp);
     
-    if (read_size_a == -1)
+    if (read_size_a != target_size) {
         fprintf(stderr, "Error reading %s structure data: %s\n", err_id, strerror(errno));
-    
-    if (read_size_a != target_size)
         return 0;
+    }
     
     *flex_value = realloc(*flex_value, *flex_size);
     
@@ -26,36 +24,33 @@ int pfr_disk_read(int fd, void *target_struct, int target_size, void **flex_valu
         return 0;
     }
     
-    read_size_b = read(fd, *flex_value, *flex_size);
+    read_size_b = fread(*flex_value, 1, *flex_size, fp);
     
-    if (read_size_b == -1)
+    if (read_size_b != *flex_size) {
         fprintf(stderr, "Error reading %s flexible value: %s\n", err_id, strerror(errno));
-    
-    if (read_size_b != *flex_size)
         return 0;
+    }
     
     return 1;
 }
 
-int pfr_disk_write(int fd, const void *source_struct, int source_size, const void *flex_value, int flex_size, const char *err_id)
+int pfr_disk_write(FILE *fp, const void *source_struct, int source_size, const void *flex_value, int flex_size, const char *err_id)
 {
     int write_size_a = 0, write_size_b = 0;
      
-    write_size_a = write(fd, source_struct, source_size);
+    write_size_a = fwrite(source_struct, 1, source_size, fp);
     
-    if (write_size_a == -1)
+    if (write_size_a != source_size) {
         fprintf(stderr, "Error writing %s structure data: %s\n", err_id, strerror(errno));
-    
-    if (write_size_a != source_size)
         return 0;
+    }
     
-    write_size_b = write(fd, flex_value, flex_size);
-    
-    if (write_size_b == -1)
+    write_size_b = fwrite(flex_value, 1, flex_size, fp);
+
+    if (write_size_b != flex_size) {
         fprintf(stderr, "Error writing %s flexible value: %s\n", err_id, strerror(errno));
-    
-    if (write_size_b != flex_size)
         return 0;
+    }
     
     return 1;
 }
