@@ -89,10 +89,17 @@ static struct cmd_struct *get_builtin(const char *s)
     return NULL;
 }
 
-static void usage(int argc, const char **argv, struct cmd_struct *cmd)
+static void usage()
 {
-    printf("usage: %s\n", argv[0]);
+
 }
+
+static void fatal()
+{
+
+}
+
+#define noop do {} while(0)
 
 int main(int argc, const char **argv)
 {
@@ -101,8 +108,19 @@ int main(int argc, const char **argv)
     if (argc >= 2)
         cmd = get_builtin(argv[1]);
     
-    if (cmd == NULL || !cmd->fn(argc, argv))
-        usage(argc, argv, cmd);
+    if (cmd == NULL)
+        usage();
+        
+    else switch (cmd->fn(argc, argv)) {
+        
+        case -1: fatal(); break;
+        
+        case  0: usage();
+        
+        case  1: noop;
+        
+        default: noop;
+    }
     
     return 0;
 }
