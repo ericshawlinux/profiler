@@ -1,14 +1,25 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "pfr_type.c"
 
+static void usage()
+{
+    printf("usage: ");
+}
+
+static void fatal(const char *msg)
+{
+    printf("fatal: %s\n", msg);
+}
+
 #define DATA_TYPE_SIZE 7
 
-static int pfr_cmd_type_define(int argc, const char **argv)
+static void pfr_cmd_type_define(int argc, const char **argv)
 {
     if (argc != 4)
-        return 0;
+        return;
     
     char data_type[DATA_TYPE_SIZE];
     strncpy(data_type, argv[3], DATA_TYPE_SIZE);
@@ -25,46 +36,77 @@ static int pfr_cmd_type_define(int argc, const char **argv)
         type.data_type = 'n';
         
     else
-        return 0;
+        return;
     
     type.nsize = strlen(argv[2]) + 1;
     
-    return pfr_type_save(&type, argv[2]);
+    if (!pfr_type_save(&type, argv[2]))
+        fatal("unable to define type");
 }
 
-static int pfr_cmd_type_undefine(int argc, const char **argv)
+static void pfr_cmd_type_undefine(int argc, const char **argv)
 {
-    if (argc != 3)
-        return 0;
+    if (argc < 3)
+        return usage();
     
-    return pfr_type_delete(argv[2], 0);
+    char *type_name = NULL;
+    int type_id = 0;
+    
+    int i;
+    for (i = 2; i < argc; i++) {
+        
+        if (type_name == NULL && *argv[i] != '-') {
+            int argl = strlen(argv[i]) + 1;
+            type_name = malloc(argl);
+            strncpy(type_name, argv[i], argl);
+        }
+        
+        else if (type_id < 1 && !strcmp(argv[i], "--type-id")) {
+        
+            if (i+1 >= argc)
+                return fatal("no type id specified");
+        
+            type_id = strtol(argv[++i], NULL, 10);
+        
+            if (type_id < PFR_CFG_TYPE_FIRST_ID)
+                return fatal("invalid type id number");
+        }
+        
+        else
+            return fatal("unrecognized option");
+    }
+    
+    // TODO: warn if details of this type exist and exit
+    
+    if (!pfr_type_delete(type_name, type_id))
+        fatal("unable to delete type");
+    
+    free(type_name);
 }
 
-static int pfr_cmd_type_show(int argc, const char **argv)
+static void pfr_cmd_type_show()
 {
     pfr_type_print();
-
-    return 1;
 }
 
-static int pfr_cmd_detail_set(int argc, const char **argv)
+static void pfr_cmd_detail_set()
 {
-    return 0;
+
 }
 
-static int pfr_cmd_detail_get(int argc, const char **argv)
+static void pfr_cmd_detail_get()
 {
-    return 0;
+
 }
 
-static int pfr_cmd_help(int argc, const char **argv)
+static void pfr_cmd_help()
 {
-    return 0;
+
 }
 
 struct cmd_struct {
     const char *cmd;
-    int (*fn)(int argc, const char **argv);
+    void (*fn)(int argc, const char **argv);
 };
 
 static struct cmd_struct commands[] = {
@@ -89,16 +131,6 @@ static struct cmd_struct *get_builtin(const char *s)
     return NULL;
 }
 
-static void usage()
-{
-
-}
-
-static void fatal()
-{
-
-}
-
 #define noop do {} while(0)
 
 int main(int argc, const char **argv)
@@ -111,16 +143,8 @@ int main(int argc, const char **argv)
     if (cmd == NULL)
         usage();
         
-    else switch (cmd->fn(argc, argv)) {
-        
-        case -1: fatal(); break;
-        
-        case  0: usage();
-        
-        case  1: noop;
-        
-        default: noop;
-    }
+    else
+        cmd->fn(argc, argv);
     
     return 0;
 }

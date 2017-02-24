@@ -54,7 +54,10 @@ int pfr_type_delete(const char *type_name, int type_id)
     
     while (pfr_type_read(origin, &current_type, &current_name))
     {
-        if (!strcmp(current_name, type_name) || current_type.type_id == type_id)
+        if (current_type.type_id == type_id)
+            continue;
+        
+        if (type_name != NULL && !strcmp(current_name, type_name))
             continue;
         
         if (!pfr_type_write(dest, current_type, current_name)) {
