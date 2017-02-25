@@ -39,5 +39,6 @@
 
     #define PFR_CFG_TYPE_FIRST_ID 1
     #define PFR_CFG_DETAIL_FIRST_ID 1
+    #define PFR_CFG_PROFILE_FIRST_ID 1
 
 #endif // pfr_config.h included

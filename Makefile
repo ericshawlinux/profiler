@@ -19,6 +19,7 @@ check:
 	gcc $(CFLAGS) -c -I./src src/pfr_detail.c
 	gcc $(CFLAGS) -c -I./src src/pfr_detail.h
 	gcc $(CFLAGS) -c -I./src src/pfr_disk.c
+	gcc $(CFLAGS) -c -I./src src/pfr_usage.c
 
 clean:
 	rm -vf *.o src/*.o src/*.gch
