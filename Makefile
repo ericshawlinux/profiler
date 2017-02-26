@@ -20,6 +20,10 @@ check:
 	gcc $(CFLAGS) -c -I./src src/pfr_detail.h
 	gcc $(CFLAGS) -c -I./src src/pfr_disk.c
 	gcc $(CFLAGS) -c -I./src src/pfr_usage.c
+	gcc $(CFLAGS) -c -I./src src/pfr_list.c
+	gcc $(CFLAGS) -c -I./src src/pfr_list.h
+	gcc $(CFLAGS) -c -I./src src/pfr_filter.c
+	gcc $(CFLAGS) -c -I./src src/pfr_filter.h
 
 clean:
 	rm -vf *.o src/*.o src/*.gch
