@@ -26,5 +26,5 @@ struct node {
 
 typedef struct node list;
 
-void push_list(void *bytes, int bsize, list **head);
+void unshift_list(void *bytes, int bsize, list **head);
 void free_list(list *head);

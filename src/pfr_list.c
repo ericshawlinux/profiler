@@ -26,7 +26,7 @@
 #include <malloc.h>
 #include <string.h>
 
-void push_list(void *bytes, int bsize, list **head)
+void unshift_list(void *bytes, int bsize, list **head)
 {
     list *new;
     new = malloc(sizeof(int) + sizeof(struct node*) + bsize);
@@ -42,9 +42,8 @@ void free_list(list *head)
 {
     if (head != NULL && head->next != NULL)
         free_list(head->next);
-    
-    if (head != NULL)
-        free(head);
+
+    free(head);
 }
 
 #endif // pfr_list.c included

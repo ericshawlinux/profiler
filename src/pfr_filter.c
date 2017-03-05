@@ -90,10 +90,9 @@ list *pfr_type_filter(struct pfr_type *search, const char *type_name)
     else while(pfr_type_read(type_fp, &current, &current_name)) {
         
         if (pfr_type_matches_filter(&current, search, current_name, type_name)) {
-            // push the matching type, then it's name.
-            // todo: rename to push unshift for clarity
-            push_list(&current, sizeof current, &matching_types);
-            push_list(current_name, strlen(current_name) + 1, &matching_types);
+            // push (beginning) the matching type, then it's name.
+            unshift_list(&current, sizeof current, &matching_types);
+            unshift_list(current_name, strlen(current_name) + 1, &matching_types);
         }
     }
     
