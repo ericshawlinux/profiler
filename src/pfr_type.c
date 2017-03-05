@@ -26,8 +26,47 @@
 #include <stdio.h>
 
 #include "pfr_type.h"
+#include "pfr_list.c"
+#include "pfr_filter.c"
 #include "pfr_config.h"
 #include "pfr_disk.c"
+
+struct pfr_type pfr_type_load(int in_type_id, char **out_type_name)
+{
+    list *lookup_results = NULL;
+    struct node *t_name = NULL, *t_data = NULL;
+    struct pfr_type type = {0}, search = {0};
+    search.type_id = in_type_id;
+    
+    lookup_results = pfr_type_filter(&search, "", FILTER_MODE_TYPE_ID_EQUALS);
+    
+    if (lookup_results != NULL && lookup_results->next != NULL) {
+        t_name = lookup_results;
+        t_data = lookup_results->next;
+        
+        if (t_data->bsize == sizeof type) {
+            memcpy(&type, t_data->bytes, sizeof type);
+        }
+        else {
+            printf("Unexpected size in pfr_type_load (t_data)\n");
+        }
+        if (type.nsize == t_name->bsize) {
+            out_type_name = realloc(out_type_name, type.nsize);
+            strncpy(*out_type_name, t_name->bytes, type.nsize);
+        }
+        else {
+            printf("Unexpected size in pfr_type_load (t_name)\n");
+        }
+    }
+    else {
+        printf("Unexpected null node in pfr_type_load\n");
+        printf("isnull:\tlookup_results:%d next:%d\n", lookup_results == NULL, lookup_results != NULL);
+    }
+    
+    free_list(lookup_results);
+    
+    return type;
+}
 
 int pfr_type_save(struct pfr_type *type, const char *name)
 {

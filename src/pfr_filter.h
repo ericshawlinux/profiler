@@ -22,11 +22,29 @@
 #include "pfr_type.c"
 #include "pfr_detail.c"
 
-list *pfr_type_filter(struct pfr_type *search, const char *type_name);
-list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name, struct pfr_detail *detail_search, void *value);
+list *pfr_type_filter(struct pfr_type *search, const char *type_name, int);
+list *pfr_detail_filter(
+    struct pfr_type *type_search,
+    const char *type_name,
+    struct pfr_detail *detail_search,
+    void *value,
+    int
+);
 
-static int pfr_type_matches_filter(struct pfr_type *a, struct pfr_type *b, const char *a_name, const char *b_name);
-static int pfr_detail_matches_filter(struct pfr_detail *a, struct pfr_detail *b, void *a_value, void *b_value);
+static int pfr_type_matches_filter(
+    struct pfr_type *a,
+    const char *a_name,
+    struct pfr_type *b,
+    const char *b_name,
+    int
+);
+static int pfr_detail_matches_filter(
+    struct pfr_detail *a,
+    void *a_value,
+    struct pfr_detail *b,
+    void *b_value,
+    int
+);
 
 // use for searching text types
 static int str_starts_with(const char *str, const char *pre);

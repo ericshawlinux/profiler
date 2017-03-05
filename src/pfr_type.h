@@ -26,6 +26,7 @@ struct pfr_type {
     int   nsize;
 };
 
+struct pfr_type pfr_type_load(int in_type_id, char **out_type_name);
 int pfr_type_save(struct pfr_type *, const char *name);
 int pfr_type_delete(const char *type_name, int type_id);
 void pfr_type_print();

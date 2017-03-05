@@ -77,7 +77,7 @@
 #define FALSE 0
 
 
-list *pfr_type_filter(struct pfr_type *search, const char *type_name)
+list *pfr_type_filter(struct pfr_type *search, const char *type_name, int filter_mode)
 {
     list *matching_types = NULL;
     struct pfr_type current = {0};
@@ -89,7 +89,7 @@ list *pfr_type_filter(struct pfr_type *search, const char *type_name)
     
     else while(pfr_type_read(type_fp, &current, &current_name)) {
         
-        if (pfr_type_matches_filter(&current, search, current_name, type_name)) {
+        if (pfr_type_matches_filter(&current, current_name, search, type_name, filter_mode)) {
             // push (beginning) the matching type, then it's name.
             unshift_list(&current, sizeof current, &matching_types);
             unshift_list(current_name, strlen(current_name) + 1, &matching_types);
@@ -103,15 +103,42 @@ list *pfr_type_filter(struct pfr_type *search, const char *type_name)
 }
 
 list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name,
-                        struct pfr_detail *detail_search, void *detail_value)
+                        struct pfr_detail *detail_search, void *detail_value, int filter_mode)
 {
-    return NULL;
+    list *matching_details = NULL;
+    
+    struct pfr_detail   current         = {0};
+    void                *current_value  = NULL;
+    struct pfr_type     current_type    = {0};
+    char                *current_name   = NULL;
+    
+    FILE *detail_fp = fopen(PFR_CFG_DATA_FILE, "rb");
+    
+    if (detail_fp == NULL)
+        perror("Error in detail filter");
+    
+    else while(pfr_detail_read(detail_fp, &current, &current_value)) {
+        
+        if (pfr_detail_matches_filter(&current, current_value, detail_search, detail_value, filter_mode)) {
+            
+            current_type = pfr_type_load(current.type_id, &current_name);
+            
+            if (pfr_type_matches_filter(&current_type, current_name, type_search, type_name, filter_mode)) {
+                unshift_list(&current, sizeof current, &matching_details);
+                unshift_list(current_value, current.bsize, &matching_details);
+            }
+        }
+    }
+    
+    fclose(detail_fp);
+    free(current_name);
+    free(current_value);
+    
+    return matching_details;
 }
 
-int filter_mode = 0;
-
-static int pfr_type_matches_filter(struct pfr_type *a, struct pfr_type *b,
-                                   const char *a_name, const char *b_name)
+static int pfr_type_matches_filter(struct pfr_type *a, const char *a_name,
+                                   struct pfr_type *b, const char *b_name, int filter_mode)
 {
     /** Type ID Filters ***************************************/
     
@@ -149,8 +176,8 @@ static int pfr_type_matches_filter(struct pfr_type *a, struct pfr_type *b,
     return TRUE;
 }
 
-static int pfr_detail_matches_filter(struct pfr_detail *a, struct pfr_detail *b,
-                                     void *a_value, void *b_value)
+static int pfr_detail_matches_filter(struct pfr_detail *a, void *a_value,
+                                     struct pfr_detail *b, void *b_value, int filter_mode)
 {
     return TRUE;
 }
