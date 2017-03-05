@@ -79,17 +79,40 @@
 
 list *pfr_type_filter(struct pfr_type *search, const char *type_name)
 {
-    return NULL;
+    list *matching_types = NULL;
+    struct pfr_type current = {0};
+    char *current_name = NULL;
+    FILE *type_fp = fopen(PFR_CFG_TYPE_FILE, "rb");
+    
+    if (type_fp == NULL)
+        perror("Error in type filter");
+    
+    else while(pfr_type_read(type_fp, &current, &current_name)) {
+        
+        if (pfr_type_matches_filter(&current, search, current_name, type_name)) {
+            // push the matching type, then it's name.
+            // todo: rename to push unshift for clarity
+            push_list(&current, sizeof current, &matching_types);
+            push_list(current_name, strlen(current_name) + 1, &matching_types);
+        }
+    }
+    
+    fclose(type_fp);
+    free(current_name);
+    
+    return matching_types;
 }
 
-list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name, struct pfr_detail *detail_search, void *detail_value)
+list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name,
+                        struct pfr_detail *detail_search, void *detail_value)
 {
     return NULL;
 }
 
 int filter_mode = 0;
 
-static int pfr_type_matches_filter(struct pfr_type *a, struct pfr_type *b, const char *a_name, const char *b_name)
+static int pfr_type_matches_filter(struct pfr_type *a, struct pfr_type *b,
+                                   const char *a_name, const char *b_name)
 {
     /** Type ID Filters ***************************************/
     
@@ -127,9 +150,10 @@ static int pfr_type_matches_filter(struct pfr_type *a, struct pfr_type *b, const
     return TRUE;
 }
 
-static int pfr_detail_matches_filter(struct pfr_detail *a, struct pfr_detail *b, void *a_value, void *b_value)
+static int pfr_detail_matches_filter(struct pfr_detail *a, struct pfr_detail *b,
+                                     void *a_value, void *b_value)
 {
-    return FALSE;
+    return TRUE;
 }
 
 
