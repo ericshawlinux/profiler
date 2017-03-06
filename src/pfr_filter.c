@@ -44,33 +44,27 @@
 
 // The following modes only affect detail filtering
 
-#define FILTER_MODE_PROFILE_ID_EQUALS       0x0000100
-#define FILTER_MODE_PROFILE_ID_LESS_THAN    0x0000200
-#define FILTER_MODE_PROFILE_ID_GRTR_THAN    0x0000400
-#define FILTER_MODE_PROFILE_ID_LTE         (0x0000100 | 0x0000200)
-#define FILTER_MODE_PROFILE_ID_GTE         (0x0000100 | 0x0000400)
+#define FILTER_MODE_PROFILE_ID_EQUALS       0x000100
+#define FILTER_MODE_PROFILE_ID_LESS_THAN    0x000200
+#define FILTER_MODE_PROFILE_ID_GRTR_THAN    0x000400
+#define FILTER_MODE_PROFILE_ID_LTE         (0x000100 | 0x000200)
+#define FILTER_MODE_PROFILE_ID_GTE         (0x000100 | 0x000400)
 
-#define FILTER_MODE_DETAIL_ID_EQUALS        0x0001000
-#define FILTER_MODE_DETAIL_ID_LESS_THAN     0x0002000
-#define FILTER_MODE_DETAIL_ID_GRTR_THAN     0x0004000
-#define FILTER_MODE_DETAIL_ID_LTE          (0x0001000 | 0x0002000)
-#define FILTER_MODE_DETAIL_ID_GTE          (0x0001000 | 0x0004000)
+#define FILTER_MODE_DETAIL_ID_EQUALS        0x001000
+#define FILTER_MODE_DETAIL_ID_LESS_THAN     0x002000
+#define FILTER_MODE_DETAIL_ID_GRTR_THAN     0x004000
+#define FILTER_MODE_DETAIL_ID_LTE          (0x001000 | 0x002000)
+#define FILTER_MODE_DETAIL_ID_GTE          (0x001000 | 0x004000)
 
-#define FILTER_MODE_NUMBER_EQUALS           0x0010000
-#define FILTER_MODE_NUMBER_LESS_THAN        0x0020000
-#define FILTER_MODE_NUMBER_GRTR_THAN        0x0040000
-#define FILTER_MODE_NUMBER_LTE             (0x0010000 | 0x0020000)
-#define FILTER_MODE_NUMBER_GTE             (0x0010000 | 0x0040000)
+#define FILTER_MODE_NUMBER_EQUALS           0x010000
+#define FILTER_MODE_NUMBER_LESS_THAN        0x020000
+#define FILTER_MODE_NUMBER_GRTR_THAN        0x040000
+#define FILTER_MODE_NUMBER_LTE             (0x010000 | 0x020000)
+#define FILTER_MODE_NUMBER_GTE             (0x010000 | 0x040000)
 
-#define FILTER_MODE_DATE_EQUALS             0x0100000
-#define FILTER_MODE_DATE_LESS_THAN          0x0200000
-#define FILTER_MODE_DATE_GRTR_THAN          0x0400000
-#define FILTER_MODE_DATE_LTE               (0x0100000 | 0x0200000)
-#define FILTER_MODE_DATE_GTE               (0x0100000 | 0x0400000)
-
-#define FILTER_MODE_TEXT_EQUALS             0x1000000
-#define FILTER_MODE_TEXT_CONTAINS           0x2000000
-#define FILTER_MODE_TEXT_STARTS_WITH        0x4000000
+#define FILTER_MODE_TEXT_EQUALS             0x100000
+#define FILTER_MODE_TEXT_CONTAINS           0x200000
+#define FILTER_MODE_TEXT_STARTS_WITH        0x400000
 
 
 #define TRUE 1
@@ -178,6 +172,89 @@ static int pfr_type_matches_filter(struct pfr_type *a, const char *a_name,
 static int pfr_detail_matches_filter(struct pfr_detail *a, void *a_value,
                                      struct pfr_detail *b, void *b_value, int filter_mode)
 {
+    long a_value_copy = *((long*)a_value);
+    long b_value_copy = *((long*)b_value);
+    
+    /** Profile ID Filters ************************************/
+
+    if (filter_mode & FILTER_MODE_PROFILE_ID_LTE)
+        if (a->profile_id > b->profile_id)
+            return FALSE;
+    
+    if (filter_mode & FILTER_MODE_PROFILE_ID_GTE)
+        if (a->profile_id < b->profile_id)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_PROFILE_ID_EQUALS)
+        if (a->profile_id != b->profile_id)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_PROFILE_ID_LESS_THAN)
+        if (a->profile_id >= b->profile_id)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_PROFILE_ID_GRTR_THAN)
+        if (a->profile_id <= b->profile_id)
+            return FALSE;
+
+    /** Detail ID Filters ************************************/
+    
+    if (filter_mode & FILTER_MODE_DETAIL_ID_LTE)
+        if (a->detail_id > b->detail_id)
+            return FALSE;
+    
+    if (filter_mode & FILTER_MODE_DETAIL_ID_GTE)
+        if (a->detail_id < b->detail_id)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_DETAIL_ID_EQUALS)
+        if (a->detail_id != b->detail_id)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_DETAIL_ID_LESS_THAN)
+        if (a->detail_id >= b->detail_id)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_DETAIL_ID_GRTR_THAN)
+        if (a->detail_id <= b->detail_id)
+            return FALSE;
+
+    /** Number and Date Value Filters ************************/
+    
+    if (filter_mode & FILTER_MODE_NUMBER_LTE)
+        if (a_value_copy > b_value_copy)
+            return FALSE;
+    
+    if (filter_mode & FILTER_MODE_NUMBER_GTE)
+        if (a_value_copy < b_value_copy)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_NUMBER_EQUALS)
+        if (a_value_copy != b_value_copy)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_NUMBER_LESS_THAN)
+        if (a_value_copy >= b_value_copy)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_NUMBER_GRTR_THAN)
+        if (a_value_copy <= b_value_copy)
+            return FALSE;
+
+    /** Text Value Filters ************************************/
+    
+    if (filter_mode & FILTER_MODE_TEXT_STARTS_WITH)
+        if (!str_starts_with(b_value, a_value))
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_TEXT_CONTAINS)
+        if (strstr(b_value, a_value) == NULL)
+            return FALSE;
+
+    if (filter_mode & FILTER_MODE_TEXT_EQUALS)
+        if (!strcmp(b_value, a_value))
+            return FALSE;
+
     return TRUE;
 }
 

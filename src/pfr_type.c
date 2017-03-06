@@ -33,7 +33,19 @@
 
 struct pfr_type pfr_type_load(int in_type_id, char **out_type_name)
 {
+    struct pfr_type search  = {.type_id = in_type_id};
+    list *filter_result = pfr_type_filter(&search, NULL, FILTER_MODE_TYPE_ID_EQUALS);
+    
     struct pfr_type type = {0};
+
+    if (filter_result != NULL && filter_result->has_type) {
+        *out_type_name = realloc(*out_type_name, filter_result->type.nsize);
+        strncpy(*out_type_name, filter_result->type_name, filter_result->type.nsize);
+        type = filter_result->type;
+    }
+    
+    free_list(filter_result);
+    
     return type;
 }
 

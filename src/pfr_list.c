@@ -44,8 +44,8 @@ void prepend_list(
     new->detail         = detail;
     
     if (type_name != NULL) {
-        new->type_name = malloc(new->type.nsize + 1);
-        strncpy(new->type_name, type_name, new->type.nsize + 1);
+        new->type_name = malloc(new->type.nsize);
+        strncpy(new->type_name, type_name, new->type.nsize);
     }
     
     if (detail_value != NULL) {
