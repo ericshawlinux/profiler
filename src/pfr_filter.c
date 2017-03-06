@@ -80,8 +80,10 @@
 list *pfr_type_filter(struct pfr_type *search, const char *type_name, int filter_mode)
 {
     list *matching_types = NULL;
+    
     struct pfr_type current = {0};
-    char *current_name = NULL;
+    char *current_name      = NULL;
+    
     FILE *type_fp = fopen(PFR_CFG_TYPE_FILE, "rb");
     
     if (type_fp == NULL)
@@ -90,9 +92,7 @@ list *pfr_type_filter(struct pfr_type *search, const char *type_name, int filter
     else while(pfr_type_read(type_fp, &current, &current_name)) {
         
         if (pfr_type_matches_filter(&current, current_name, search, type_name, filter_mode)) {
-            // push (beginning) the matching type, then it's name.
-            unshift_list(&current, sizeof current, &matching_types);
-            unshift_list(current_name, strlen(current_name) + 1, &matching_types);
+            prepend_list(&matching_types, TRUE, FALSE, current, current_name, (struct pfr_detail) {0}, NULL);
         }
     }
     
@@ -124,8 +124,7 @@ list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name,
             current_type = pfr_type_load(current.type_id, &current_name);
             
             if (pfr_type_matches_filter(&current_type, current_name, type_search, type_name, filter_mode)) {
-                unshift_list(&current, sizeof current, &matching_details);
-                unshift_list(current_value, current.bsize, &matching_details);
+                prepend_list(&matching_details, TRUE, TRUE, current_type, current_name, current, current_value);
             }
         }
     }

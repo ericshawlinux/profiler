@@ -1,14 +1,10 @@
 CFLAGS=-Wall -Wextra
 EXENAME=profiler
 
-ifeq ($(OS),Windows_NT)
-	SHELL=C:/Windows/System32/cmd.exe
-endif
-
-profiler: src/*.c src/*.h
+profiler:
 	gcc $(CFLAGS) -o $(EXENAME) src/main.c -I./src/
 
-debug: src/*.c src/*.h
+debug:
 	gcc $(CFLAGS) -g -o $(EXENAME) src/main.c -I./src/
 
 check:

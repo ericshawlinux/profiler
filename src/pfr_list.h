@@ -18,13 +18,29 @@
  * 
  */
 
+#include "pfr_type.c"
+#include "pfr_detail.c"
+
 struct node {
-    struct node  *next;
-    int           bsize;
-    char          bytes[];
+    int                 has_type    :1;
+    int                 has_detail  :1;
+    struct pfr_type     type;
+    char                *type_name;
+    struct pfr_detail   detail;
+    void                *detail_value;
+    struct node         *next;
 };
 
 typedef struct node list;
 
-void unshift_list(void *bytes, int bsize, list **head);
+void prepend_list(
+    list                **head,
+    int                 has_type,
+    int                 has_detail,
+    struct pfr_type     type,
+    char                *type_name,
+    struct pfr_detail   detail,
+    void                *detail_value
+);
+
 void free_list(list *head);

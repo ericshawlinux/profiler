@@ -21,18 +21,37 @@
 #ifndef PFR_LIST_DEFINED
 #define PFR_LIST_DEFINED
 
-#include <pfr_list.h>
+#include "pfr_list.h"
 
 #include <malloc.h>
 #include <string.h>
 
-void unshift_list(void *bytes, int bsize, list **head)
+void prepend_list(
+    list                **head,
+    int                 has_type,
+    int                 has_detail,
+    struct pfr_type     type,
+    char                *type_name,
+    struct pfr_detail   detail,
+    void                *detail_value
+)
 {
-    list *new;
-    new = malloc(sizeof(int) + sizeof(struct node*) + bsize);
+    list *new = malloc(sizeof (struct node));
     
-    new->bsize = bsize;
-    memcpy(new->bytes, bytes, bsize);
+    new->has_type       = has_type;
+    new->has_detail     = has_detail;
+    new->type           = type;
+    new->detail         = detail;
+    
+    if (type_name != NULL) {
+        new->type_name = malloc(new->type.nsize + 1);
+        strncpy(new->type_name, type_name, new->type.nsize + 1);
+    }
+    
+    if (detail_value != NULL) {
+        new->detail_value = malloc(new->detail.bsize);
+        memcpy(new->detail_value, detail_value, new->detail.bsize);
+    }
     
     new->next = *head;
     *head = new;
@@ -40,10 +59,15 @@ void unshift_list(void *bytes, int bsize, list **head)
 
 void free_list(list *head)
 {
-    if (head != NULL && head->next != NULL)
+    if (head != NULL && head->next != NULL) {
         free_list(head->next);
+    }
 
-    free(head);
+    if (head != NULL) {
+        free(head->type_name);
+        free(head->detail_value);
+        free(head);
+    }
 }
 
 #endif // pfr_list.c included
