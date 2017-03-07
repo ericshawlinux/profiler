@@ -23,31 +23,31 @@
 #include "pfr_detail.c"
 
 list *pfr_type_filter(
-    struct pfr_type     *search,
+    struct pfr_type     search,
     const char          *type_name,
     int                 filter_mode
 );
 
 list *pfr_detail_filter(
-    struct pfr_type     *type_search,
+    struct pfr_type     type_search,
     const char          *type_name,
-    struct pfr_detail   *detail_search,
+    struct pfr_detail   detail_search,
     void                *value,
     int                 filter_mode
 );
 
 static int pfr_type_matches_filter(
-    struct pfr_type     *a,
+    struct pfr_type     a,
     const char          *a_name,
-    struct pfr_type     *b,
+    struct pfr_type     b,
     const char          *b_name,
     int                 filter_mode
 );
 
 static int pfr_detail_matches_filter(
-    struct pfr_detail   *a,
+    struct pfr_detail   a,
     void                *a_value,
-    struct pfr_detail   *b,
+    struct pfr_detail   b,
     void                *b_value,
     int                 filter_mode
 );

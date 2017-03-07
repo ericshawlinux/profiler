@@ -227,7 +227,7 @@ static void pfr_cmd_type_show(int argc, const char **argv)
         .data_type = data_type_filter,
     };
     
-    search_results = pfr_type_filter(&search, type_name_filter, filter_mode);
+    search_results = pfr_type_filter(search, type_name_filter, filter_mode);
     struct node *current = search_results;
     
     while (current != NULL)

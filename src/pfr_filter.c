@@ -71,7 +71,7 @@
 #define FALSE 0
 
 
-list *pfr_type_filter(struct pfr_type *search, const char *type_name, int filter_mode)
+list *pfr_type_filter(struct pfr_type search, const char *type_name, int filter_mode)
 {
     list *matching_types = NULL;
     
@@ -85,7 +85,7 @@ list *pfr_type_filter(struct pfr_type *search, const char *type_name, int filter
     
     else while(pfr_type_read(type_fp, &current, &current_name)) {
         
-        if (pfr_type_matches_filter(&current, current_name, search, type_name, filter_mode)) {
+        if (pfr_type_matches_filter(current, current_name, search, type_name, filter_mode)) {
             prepend_list(&matching_types, TRUE, FALSE, current, current_name, (struct pfr_detail) {0}, NULL);
         }
     }
@@ -96,8 +96,8 @@ list *pfr_type_filter(struct pfr_type *search, const char *type_name, int filter
     return matching_types;
 }
 
-list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name,
-                        struct pfr_detail *detail_search, void *detail_value, int filter_mode)
+list *pfr_detail_filter(struct pfr_type type_search, const char *type_name,
+                        struct pfr_detail detail_search, void *detail_value, int filter_mode)
 {
     list *matching_details = NULL;
     
@@ -113,11 +113,11 @@ list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name,
     
     else while(pfr_detail_read(detail_fp, &current, &current_value)) {
         
-        if (pfr_detail_matches_filter(&current, current_value, detail_search, detail_value, filter_mode)) {
+        if (pfr_detail_matches_filter(current, current_value, detail_search, detail_value, filter_mode)) {
             
             current_type = pfr_type_load(current.type_id, &current_name);
             
-            if (pfr_type_matches_filter(&current_type, current_name, type_search, type_name, filter_mode)) {
+            if (pfr_type_matches_filter(current_type, current_name, type_search, type_name, filter_mode)) {
                 prepend_list(&matching_details, TRUE, TRUE, current_type, current_name, current, current_value);
             }
         }
@@ -130,29 +130,29 @@ list *pfr_detail_filter(struct pfr_type *type_search, const char *type_name,
     return matching_details;
 }
 
-static int pfr_type_matches_filter(struct pfr_type *a, const char *a_name,
-                                   struct pfr_type *b, const char *b_name, int filter_mode)
+static int pfr_type_matches_filter(struct pfr_type a, const char *a_name,
+                                   struct pfr_type b, const char *b_name, int filter_mode)
 {
     /** Type ID Filters ***************************************/
     
-    if (filter_mode & FILTER_MODE_TYPE_ID_LTE && a->type_id > b->type_id)
+    if (filter_mode & FILTER_MODE_TYPE_ID_LTE && a.type_id > b.type_id)
         return FALSE;
         
-    else if (filter_mode & FILTER_MODE_TYPE_ID_GTE && a->type_id < b->type_id)
+    else if (filter_mode & FILTER_MODE_TYPE_ID_GTE && a.type_id < b.type_id)
         return FALSE;
     
-    else if (filter_mode & FILTER_MODE_TYPE_ID_EQUALS && a->type_id != b->type_id)
+    else if (filter_mode & FILTER_MODE_TYPE_ID_EQUALS && a.type_id != b.type_id)
         return FALSE;
         
-    else if (filter_mode & FILTER_MODE_TYPE_ID_LESS_THAN && a->type_id >= b->type_id)
+    else if (filter_mode & FILTER_MODE_TYPE_ID_LESS_THAN && a.type_id >= b.type_id)
         return FALSE;
     
-    else if (filter_mode & FILTER_MODE_TYPE_ID_GRTR_THAN && a->type_id <= b->type_id)
+    else if (filter_mode & FILTER_MODE_TYPE_ID_GRTR_THAN && a.type_id <= b.type_id)
         return FALSE;
         
     /** Data Type Equals **************************************/
     
-    if (filter_mode & FILTER_MODE_DATA_TYPE_EQUALS && a->data_type != b->data_type)
+    if (filter_mode & FILTER_MODE_DATA_TYPE_EQUALS && a.data_type != b.data_type)
         return FALSE;
     
     /** Type Name Filters *************************************/
@@ -169,8 +169,8 @@ static int pfr_type_matches_filter(struct pfr_type *a, const char *a_name,
     return TRUE;
 }
 
-static int pfr_detail_matches_filter(struct pfr_detail *a, void *a_value,
-                                     struct pfr_detail *b, void *b_value, int filter_mode)
+static int pfr_detail_matches_filter(struct pfr_detail a, void *a_value,
+                                     struct pfr_detail b, void *b_value, int filter_mode)
 {
     long a_value_copy = *((long*)a_value);
     long b_value_copy = *((long*)b_value);
@@ -178,45 +178,45 @@ static int pfr_detail_matches_filter(struct pfr_detail *a, void *a_value,
     /** Profile ID Filters ************************************/
 
     if (filter_mode & FILTER_MODE_PROFILE_ID_LTE)
-        if (a->profile_id > b->profile_id)
+        if (a.profile_id > b.profile_id)
             return FALSE;
     
     if (filter_mode & FILTER_MODE_PROFILE_ID_GTE)
-        if (a->profile_id < b->profile_id)
+        if (a.profile_id < b.profile_id)
             return FALSE;
 
     if (filter_mode & FILTER_MODE_PROFILE_ID_EQUALS)
-        if (a->profile_id != b->profile_id)
+        if (a.profile_id != b.profile_id)
             return FALSE;
 
     if (filter_mode & FILTER_MODE_PROFILE_ID_LESS_THAN)
-        if (a->profile_id >= b->profile_id)
+        if (a.profile_id >= b.profile_id)
             return FALSE;
 
     if (filter_mode & FILTER_MODE_PROFILE_ID_GRTR_THAN)
-        if (a->profile_id <= b->profile_id)
+        if (a.profile_id <= b.profile_id)
             return FALSE;
 
     /** Detail ID Filters ************************************/
     
     if (filter_mode & FILTER_MODE_DETAIL_ID_LTE)
-        if (a->detail_id > b->detail_id)
+        if (a.detail_id > b.detail_id)
             return FALSE;
     
     if (filter_mode & FILTER_MODE_DETAIL_ID_GTE)
-        if (a->detail_id < b->detail_id)
+        if (a.detail_id < b.detail_id)
             return FALSE;
 
     if (filter_mode & FILTER_MODE_DETAIL_ID_EQUALS)
-        if (a->detail_id != b->detail_id)
+        if (a.detail_id != b.detail_id)
             return FALSE;
 
     if (filter_mode & FILTER_MODE_DETAIL_ID_LESS_THAN)
-        if (a->detail_id >= b->detail_id)
+        if (a.detail_id >= b.detail_id)
             return FALSE;
 
     if (filter_mode & FILTER_MODE_DETAIL_ID_GRTR_THAN)
-        if (a->detail_id <= b->detail_id)
+        if (a.detail_id <= b.detail_id)
             return FALSE;
 
     /** Number and Date Value Filters ************************/
