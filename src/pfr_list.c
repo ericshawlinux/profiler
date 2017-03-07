@@ -64,8 +64,10 @@ void free_list(list *head)
     }
 
     if (head != NULL) {
-        free(head->type_name);
-        free(head->detail_value);
+        if (head->has_type)
+            free(head->type_name);
+        if (head->has_detail)
+            free(head->detail_value);
         free(head);
     }
 }

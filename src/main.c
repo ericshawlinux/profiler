@@ -48,8 +48,13 @@ static int arg_id(int argc, const char **argv, int i, unsigned int min, const ch
 }
 
 // attempts to allocate and set the value of argv[i] for later use
-static int arg_aquire(const char **argv, int i, void **target)
+static int arg_aquire(int argc, const char **argv, int i, void **target)
 {
+    if (i >= argc) {
+        printf("Error: not enough arguments\n");
+        return 0;
+    }
+    
     int argl = strlen(argv[i]) + 1;
     *target = malloc(argl);
     
@@ -112,7 +117,7 @@ static void pfr_cmd_type_undefine(int argc, const char **argv)
     {
         if (type_name == NULL && *argv[i] != '-')
         {
-            if (!arg_aquire(argv, i, (void **) &type_name))
+            if (!arg_aquire(argc, argv, i, (void **) &type_name))
                 return;
         }
         
@@ -139,9 +144,100 @@ static void pfr_cmd_type_undefine(int argc, const char **argv)
     free(type_name);
 }
 
-static void pfr_cmd_type_show()
+static void pfr_cmd_type_show(int argc, const char **argv)
 {
-    pfr_type_print();
+    int     filter_mode         = 0;
+    int     type_id_filter      = 0;
+    char    data_type_filter    = 0;
+    char    *type_name_filter   = NULL;
+    list    *search_results     = NULL;
+    
+    int i;
+    for (i = 2; i < argc; i++)
+    {
+        if (type_id_filter == 0 && str_starts_with(argv[i], "--type-id"))
+        {
+            if (!strcmp(argv[i], "--type-id-lte"))
+                filter_mode |= FILTER_MODE_TYPE_ID_LTE;
+            
+            else if (!strcmp(argv[i], "--type-id-gte"))
+                filter_mode |= FILTER_MODE_TYPE_ID_GTE;
+            
+            else if (!strcmp(argv[i], "--type-id-lt"))
+                filter_mode |= FILTER_MODE_TYPE_ID_LESS_THAN;
+            
+            else if (!strcmp(argv[i], "--type-id-gt"))
+                filter_mode |= FILTER_MODE_TYPE_ID_GRTR_THAN;
+            
+            else if (!strcmp(argv[i], "--type-id"))
+                filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
+            else {
+                printf("unrecognized option %s\n", argv[i]);
+                return;
+            }
+            
+            // try to get the type-id value
+            type_id_filter = arg_id(argc, argv, ++i, PFR_CFG_TYPE_FIRST_ID, "type");
+            if (type_id_filter == -1)
+                return;
+        }
+        else if (data_type_filter == 0 && str_starts_with(argv[i], "--data-type"))
+        {
+            i++;
+            
+            if (!strcmp("date", argv[i]))
+                data_type_filter = 'd';
+                
+            else if (!strcmp("number", argv[i]))
+                data_type_filter = 'n';
+                
+            else if (!strcmp("text", argv[i]))
+                data_type_filter = 't';
+            
+            else {
+                printf("unrecognized data-type filter %s\n", argv[i]);
+                return;
+            }
+            
+            filter_mode |= FILTER_MODE_DATA_TYPE_EQUALS;
+        }
+        else if (type_name_filter == NULL && str_starts_with(argv[i], "--type-name"))
+        {
+            if (!strcmp(argv[i], "--type-name")) {
+                filter_mode |= FILTER_MODE_TYPE_NAME_EQUALS;
+            }
+            else if (!strcmp(argv[i], "--type-name-contains")) {
+                filter_mode |= FILTER_MODE_TYPE_NAME_CONTAINS;
+            }
+            else if (!strcmp(argv[i], "--type-name-starts-with")) {
+                filter_mode |= FILTER_MODE_TYPE_NAME_STARTS_WITH;
+            }
+            else {
+                printf("unrecognized type-name filter: %s\n", argv[i]);
+                return;
+            }
+            
+            if (!arg_aquire(argc, argv, ++i, (void**) &type_name_filter))
+                return;
+        }
+    }
+    
+    struct pfr_type search = {
+        .type_id = type_id_filter,
+        .data_type = data_type_filter,
+    };
+    
+    search_results = pfr_type_filter(&search, type_name_filter, filter_mode);
+    struct node *current = search_results;
+    
+    while (current != NULL)
+    {
+        pfr_type_print(current->type, current->type_name, current == search_results);
+        current = current->next;
+    }
+    
+    free(type_name_filter);
+    free_list(search_results);
 }
 
 static void pfr_cmd_detail_new(int argc, const char **argv)
@@ -182,13 +278,13 @@ static void pfr_cmd_detail_new(int argc, const char **argv)
         
         else if (type_id == 0 && type_name == NULL)
         {
-            if (!arg_aquire(argv, i, (void **) &type_name))
+            if (!arg_aquire(argc, argv, i, (void **) &type_name))
                 return;
         }
         
         else if (value == NULL)
         {
-            if (!arg_aquire(argv, i, (void **) &value))
+            if (!arg_aquire(argc, argv, i, (void **) &value))
                 return;
         }
         

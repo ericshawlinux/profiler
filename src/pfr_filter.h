@@ -53,5 +53,5 @@ static int pfr_detail_matches_filter(
 );
 
 // use for searching text types
-static int str_starts_with(const char *str, const char *pre);
+int str_starts_with(const char *str, const char *pre);
 

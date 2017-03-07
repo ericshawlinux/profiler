@@ -157,13 +157,13 @@ static int pfr_type_matches_filter(struct pfr_type *a, const char *a_name,
     
     /** Type Name Filters *************************************/
     
-    if (filter_mode & FILTER_MODE_TYPE_NAME_STARTS_WITH && !str_starts_with(b_name, a_name))
+    if (filter_mode & FILTER_MODE_TYPE_NAME_STARTS_WITH && !str_starts_with(a_name, b_name))
         return FALSE;
 
-    else if (filter_mode & FILTER_MODE_TYPE_NAME_CONTAINS && strstr(b_name, a_name) == NULL)
+    else if (filter_mode & FILTER_MODE_TYPE_NAME_CONTAINS && strstr(a_name, b_name) == NULL)
         return FALSE;
 
-    else if (filter_mode & FILTER_MODE_TYPE_NAME_EQUALS && !strcmp(b_name, a_name))
+    else if (filter_mode & FILTER_MODE_TYPE_NAME_EQUALS && strcmp(a_name, b_name) != 0)
         return FALSE;
     
     return TRUE;
@@ -244,15 +244,15 @@ static int pfr_detail_matches_filter(struct pfr_detail *a, void *a_value,
     /** Text Value Filters ************************************/
     
     if (filter_mode & FILTER_MODE_TEXT_STARTS_WITH)
-        if (!str_starts_with(b_value, a_value))
+        if (!str_starts_with(a_value, b_value))
             return FALSE;
 
     if (filter_mode & FILTER_MODE_TEXT_CONTAINS)
-        if (strstr(b_value, a_value) == NULL)
+        if (strstr(a_value, b_value) == NULL)
             return FALSE;
 
     if (filter_mode & FILTER_MODE_TEXT_EQUALS)
-        if (!strcmp(b_value, a_value))
+        if (strcmp(a_value, b_value) != 0)
             return FALSE;
 
     return TRUE;

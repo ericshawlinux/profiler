@@ -119,27 +119,12 @@ int pfr_type_delete(const char *type_name, int type_id)
     return 1;
 }
 
-void pfr_type_print()
+void pfr_type_print(struct pfr_type type, const char *type_name, int print_header)
 {
-    FILE *fp = fopen(PFR_CFG_TYPE_FILE, "rb");
-
-    if (fp == NULL) {
-        perror("Error opening type file for reading");
-        return;
-    }
-
-    struct pfr_type itype;
-    char *iname = NULL;
-
-    printf("type_id data_type type_name\n");
-
-    while (pfr_type_read(fp, &itype, &iname))
-        printf("%7d %9c %s\n", itype.type_id, itype.data_type, iname);
-        
-    free(iname);
-
-    fclose(fp);
-    return;
+    if (print_header)
+        printf("type_id data_type type_name\n");
+    
+    printf("%7d %9c %s\n", type.type_id, type.data_type, type_name);
 }
 
 static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
