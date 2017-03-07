@@ -24,6 +24,8 @@
 
 #include "pfr_type.c"
 #include "pfr_usage.c"
+#include "pfr_list.c"
+#include "pfr_filter.c"
 
 #define DATA_TYPE_SIZE 7
 
