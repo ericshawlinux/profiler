@@ -104,25 +104,31 @@ static void pfr_cmd_type_define(int argc, const char **argv)
 
 static void pfr_cmd_type_undefine(int argc, const char **argv)
 {
+    list                *existing_details   = NULL;
+    struct pfr_type     type                = {0};
+    int                 filter_mode         = 0;
+    char                *type_name          = NULL;
+    int                 type_id             = 0;
+    
     if (argc < 3) {
         undef_usage(argv[0]);
         return;
     }
-    
-    char *type_name = NULL;
-    int type_id = 0;
     
     int i;
     for (i = 2; i < argc; i++)
     {
         if (type_name == NULL && *argv[i] != '-')
         {
+            filter_mode |= FILTER_MODE_TYPE_NAME_EQUALS;
             if (!arg_aquire(argc, argv, i, (void **) &type_name))
                 return;
         }
         
         else if (type_id < 1 && !strcmp(argv[i], "--type-id"))
         {
+            filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
+            
             type_id = arg_id(argc, argv, ++i, PFR_CFG_TYPE_FIRST_ID, "type");
             
             if (type_id == -1)
@@ -136,11 +142,18 @@ static void pfr_cmd_type_undefine(int argc, const char **argv)
         }
     }
     
-    // TODO: warn if details of this type exist and exit
+    // check if any details exist with this type
+    type.type_id = type_id;
+    existing_details = pfr_detail_filter(type, type_name, (struct pfr_detail){0}, type_name, filter_mode);
     
-    if (!pfr_type_delete(type_name, type_id))
+    if (existing_details != NULL)
+        printf("error: there are %d details with this type\n", list_size(existing_details));
+    
+    // try to delete the type
+    else if (!pfr_type_delete(type_name, type_id))
         printf("error: unable to delete type\n");
     
+    free_list(existing_details);
     free(type_name);
 }
 
@@ -242,30 +255,39 @@ static void pfr_cmd_type_show(int argc, const char **argv)
 
 static void pfr_cmd_detail_new(int argc, const char **argv)
 {
+    // user arguments
+    int         profile_id  = 0;
+    int         type_id     = 0;
+    char        *type_name  = NULL;
+    signed char *value      = NULL;
+    
+    // for checking if the type exists
+    struct pfr_type type            = {0};
+    int             filter_mode     = 0;
+    list            *matching_types = NULL;
+    
+    // the record to be saved
+    struct pfr_detail detail = {0};
+    
     if (argc < 4) {
         new_usage(argv[0]);
         return;
     }
     
-    int profile_id = 0, type_id = 0;
-    char *type_name = NULL;
-    signed char *value = NULL;
-    
     int i;
-    for (i = 0; i < argc; i++)
+    for (i = 2; i < argc; i++)
     {
-        if (profile_id > 0 && !strcmp(argv[i], "--profile-id"))
+        if (profile_id == 0 && !strcmp(argv[i], "--profile-id"))
         {
             profile_id = arg_id(argc, argv, ++i, PFR_CFG_PROFILE_FIRST_ID, "profile");
-            
             if (profile_id == -1)
                 return;
         }
         
-        else if (type_id > 0 && !strcmp(argv[i], "--type-id"))
+        else if (type_id == 0 && !strcmp(argv[i], "--type-id"))
         {
+            filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
             type_id = arg_id(argc, argv, ++i, PFR_CFG_TYPE_FIRST_ID, "type");
-            
             if (type_id == -1)
                 return;
         }
@@ -278,6 +300,7 @@ static void pfr_cmd_detail_new(int argc, const char **argv)
         
         else if (type_id == 0 && type_name == NULL)
         {
+            filter_mode |= FILTER_MODE_TYPE_NAME_EQUALS;
             if (!arg_aquire(argc, argv, i, (void **) &type_name))
                 return;
         }
@@ -293,12 +316,28 @@ static void pfr_cmd_detail_new(int argc, const char **argv)
             printf("error: too many arguments\n");
             return;
         }
+        printf("state: %d %d %s %s\n", type_id, profile_id, type_name, value);
     }
     
-    // get the type for the id number, and for converting value
-    // to something useful like time_t, or int.
-    // finally, set detail information and save.
+    type.type_id = type_id;
     
+    matching_types = pfr_type_filter(type, type_name, filter_mode);
+    
+    if (matching_types == NULL) {
+        printf("error: the specified type was not found.\n");
+        return;
+    }
+    
+    // if no profile id is specified we need to get the next profile id
+    // then get the next detail id for that profile id
+    if (profile_id > 0)
+        detail.profile_id = profile_id;
+        
+    detail.type_id = matching_types->type.type_id;
+    
+    pfr_detail_save(&detail, value);
+    
+    free_list(matching_types);
     free(type_name);
     free(value);
 }
@@ -310,7 +349,25 @@ static void pfr_cmd_detail_update()
 
 static void pfr_cmd_detail_get()
 {
+    list *all_details = pfr_detail_filter((struct pfr_type){0},"",(struct pfr_detail){0},"",0);
+    struct node *current = all_details;
 
+    printf("%d\n", list_size(all_details));
+
+    printf("profile-id  detail-id  type-id  type-name  data-type  bytes\n");
+    
+    while(current!=NULL)
+    {
+        printf("%d    %d    %d    %s    %c    %s\n",
+            current->detail.profile_id,
+            current->detail.detail_id,
+            current->detail.type_id,
+            current->type_name,
+            current->type.data_type,
+            (char *)current->detail_value
+        );
+        current = current->next;
+    }
 }
 
 static void pfr_cmd_help(int argc, const char **argv)

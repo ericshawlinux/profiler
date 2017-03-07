@@ -72,4 +72,18 @@ void free_list(list *head)
     }
 }
 
+int list_size(list *head)
+{
+    struct node *current = head;
+    int count = 0;
+    
+    while (current != NULL)
+    {
+        count++;
+        current = current->next;
+    }
+    
+    return count;
+}
+
 #endif // pfr_list.c included

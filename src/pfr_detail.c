@@ -31,9 +31,6 @@
 
 int pfr_detail_save(struct pfr_detail *detail, const void *value)
 {
-    if (!pfr_detail_get_state(detail))
-        return 0;
-    
     FILE *fp = fopen(PFR_CFG_DATA_FILE, "ab");
     
     if (fp == NULL) {
@@ -84,35 +81,6 @@ int pfr_detail_delete(struct pfr_detail detail)
     
     free(current_value);
     
-    return 1;
-}
-
-static int pfr_detail_get_state(struct pfr_detail *detail)
-{
-    FILE *fp = fopen(PFR_CFG_DATA_FILE, "rb");
-
-    if (fp == NULL) {
-        perror("Error opening data file for reading");
-        return 0;
-    }
-
-    struct pfr_detail current_detail;
-    void *current_value = NULL;
-    
-    detail->detail_id = PFR_CFG_DETAIL_FIRST_ID;
-
-    while (pfr_detail_read(fp, &current_detail, &current_value)) {
-        
-        if (!profile_match(current_detail, *detail))
-            continue;
-        
-        if (current_detail.detail_id >= detail->detail_id)
-            detail->detail_id = current_detail.detail_id + 1; 
-    }
-    
-    free(current_value);
-
-    fclose(fp);
     return 1;
 }
 
