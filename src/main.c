@@ -342,12 +342,12 @@ static void pfr_cmd_detail_new(int argc, const char **argv)
     free(value);
 }
 
-static void pfr_cmd_detail_update()
+static void pfr_cmd_detail_update(int argc __attribute__((unused)), const char **argv __attribute__((unused)))
 {
     
 }
 
-static void pfr_cmd_detail_get()
+static void pfr_cmd_detail_get(int argc __attribute__((unused)), const char **argv __attribute__((unused)))
 {
     list *all_details = pfr_detail_filter((struct pfr_type){0},"",(struct pfr_detail){0},"",0);
     struct node *current = all_details;
@@ -370,7 +370,7 @@ static void pfr_cmd_detail_get()
     }
 }
 
-static void pfr_cmd_help(int argc, const char **argv)
+static void pfr_cmd_help(int argc __attribute__((unused)), const char **argv)
 {
     usage(argv[0]);
 }

@@ -30,7 +30,6 @@ struct pfr_detail {
 int pfr_detail_save(struct pfr_detail *detail, const void *value);
 int pfr_detail_delete(struct pfr_detail);
 
-static int pfr_detail_get_state(struct pfr_detail *detail);
 static int pfr_detail_read(FILE *, struct pfr_detail *target, void **value);
 static int pfr_detail_write(FILE *, struct pfr_detail source, void *value);
 
