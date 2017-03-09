@@ -73,7 +73,7 @@ static int arg_aquire(int argc, const char **argv, int i, void **target)
 static void pfr_cmd_type_define(int argc, const char **argv)
 {
     if (argc != 4) {
-        def_usage(argv[0]);
+        usage_fmt_s(def_usage_string, argv[0]);
         return;
     }
     
@@ -94,7 +94,7 @@ static void pfr_cmd_type_define(int argc, const char **argv)
     else
     {
         printf("error: invalid type '%s'\n", data_type);
-        def_usage(argv[0]);
+        usage_fmt_s(def_usage_string, argv[0]);
         return;
     }
     
@@ -113,7 +113,7 @@ static void pfr_cmd_type_undefine(int argc, const char **argv)
     int                 type_id             = 0;
     
     if (argc < 3) {
-        undef_usage(argv[0]);
+        usage_fmt_s(undef_usage_string, argv[0]);
         return;
     }
     
@@ -272,7 +272,7 @@ static void pfr_cmd_detail_new(int argc, const char **argv)
     struct pfr_detail detail = {0};
     
     if (argc < 4) {
-        new_usage(argv[0]);
+        usage_fmt_s(new_usage_string, argv[0]);
         return;
     }
     
@@ -374,7 +374,7 @@ static void pfr_cmd_detail_get(int argc __attribute__((unused)), const char **ar
 
 static void pfr_cmd_help(int argc __attribute__((unused)), const char **argv)
 {
-    usage(argv[0]);
+    usage_fmt_ss(usage_string, argv[0], argv[0]);
 }
 
 struct cmd_struct {
@@ -415,7 +415,7 @@ int main(int argc, const char **argv)
         cmd = get_builtin(argv[1]);
     
     if (cmd == NULL)
-        usage(argv[0]);
+        usage_fmt_ss(usage_string, argv[0], argv[0]);
         
     else
         cmd->fn(argc, argv);

@@ -25,7 +25,7 @@
 #include <malloc.h>
 #include <string.h>
 
-static const char *usage_string =
+const char *usage_string =
     "usage: %s <command> [<args>]\n\n"
     "type commands:\n"
     "   def     Define a type of profile detail\n"
@@ -37,56 +37,36 @@ static const char *usage_string =
     "   get     Show profile details matching criteria\n\n"
     "See '%s help <command>' or 'profiler help <concept>' to read about a specific subcommand or concept.\n";
 
-void usage(const char *program_name)
-{
-    char *usage_complete = malloc(strlen(usage_string) + strlen(program_name) * 2);
-    if (usage_complete == NULL)
-        return;
-    sprintf(usage_complete, usage_string, program_name, program_name);
-    puts(usage_complete);
-    free(usage_complete);
-}
-
-static const char *def_usage_string =
+const char *def_usage_string =
     "usage: %s def <type-name> <type>\n"
     "types: text, date, number\n";
 
-void def_usage(const char *program_name)
-{
-    char *usage_complete = malloc(strlen(def_usage_string) + strlen(program_name));
-    if (usage_complete == NULL)
-        return;
-    sprintf(usage_complete, def_usage_string, program_name);
-    puts(usage_complete);
-    free(usage_complete);
-}
-
-static const char *undef_usage_string =
+const char *undef_usage_string =
     "usage: %s undef <type-name | --type-id type-id>\n";
 
-void undef_usage(const char *program_name)
-{
-    char *usage_complete = malloc(strlen(undef_usage_string) + strlen(program_name));
-    if (usage_complete == NULL)
-        return;
-    sprintf(usage_complete, undef_usage_string, program_name);
-    puts(usage_complete);
-    free(usage_complete);
-}
-
-static const char *new_usage_string =
+const char *new_usage_string =
     "usage: %s new <options> <value>\n"
     "\n"
     "options:\n"
     "   [--profile-id profile-id]\n"
     "   <type-name | --type-id type-id>\n";
 
-void new_usage(const char *program_name)
+void usage_fmt_s(const char *fmt, const char *arg1)
 {
-    char *usage_complete = malloc(strlen(new_usage_string) + strlen(program_name));
+    char *usage_complete = malloc(strlen(fmt) + strlen(arg1) + 1);
     if (usage_complete == NULL)
         return;
-    sprintf(usage_complete, new_usage_string, program_name);
+    sprintf(usage_complete, fmt, arg1);
+    puts(usage_complete);
+    free(usage_complete);
+}
+
+void usage_fmt_ss(const char *fmt, const char *arg1, const char *arg2)
+{
+    char *usage_complete = malloc(strlen(fmt) + strlen(arg1) + strlen(arg2) + 1);
+    if (usage_complete == NULL)
+        return;
+    sprintf(usage_complete, usage_string, arg1, arg2);
     puts(usage_complete);
     free(usage_complete);
 }
