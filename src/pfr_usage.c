@@ -35,54 +35,42 @@ static const char *usage_string =
     "   new     Create a new detail (use --profile-id to add a new detail to an existing profile)\n"
     "   update  Update or delete a profile detail\n"
     "   get     Show profile details matching criteria\n\n"
-    "See '%s help <command>' or 'profiler help <concept>' to read about a specific subcommand or concept.\n"
-;
+    "See '%s help <command>' or 'profiler help <concept>' to read about a specific subcommand or concept.\n";
 
 void usage(const char *program_name)
 {
     char *usage_complete = malloc(strlen(usage_string) + strlen(program_name) * 2);
-    
     if (usage_complete == NULL)
         return;
-    
     sprintf(usage_complete, usage_string, program_name, program_name);
-    printf("%s", usage_complete);
-    
+    puts(usage_complete);
     free(usage_complete);
 }
 
 static const char *def_usage_string =
     "usage: %s def <type-name> <type>\n"
-    "types: text, date, number\n"
-;
+    "types: text, date, number\n";
 
 void def_usage(const char *program_name)
 {
     char *usage_complete = malloc(strlen(def_usage_string) + strlen(program_name));
-    
     if (usage_complete == NULL)
         return;
-    
     sprintf(usage_complete, def_usage_string, program_name);
-    printf("%s", usage_complete);
-    
+    puts(usage_complete);
     free(usage_complete);
 }
 
 static const char *undef_usage_string =
-    "usage: %s undef <type-name | --type-id type-id>\n"
-;
+    "usage: %s undef <type-name | --type-id type-id>\n";
 
 void undef_usage(const char *program_name)
 {
     char *usage_complete = malloc(strlen(undef_usage_string) + strlen(program_name));
-    
     if (usage_complete == NULL)
         return;
-    
     sprintf(usage_complete, undef_usage_string, program_name);
-    printf("%s", usage_complete);
-    
+    puts(usage_complete);
     free(usage_complete);
 }
 
@@ -91,20 +79,15 @@ static const char *new_usage_string =
     "\n"
     "options:\n"
     "   [--profile-id profile-id]\n"
-    "   <type-name | --type-id type-id>\n"
-    "\n"
-;
+    "   <type-name | --type-id type-id>\n";
 
 void new_usage(const char *program_name)
 {
     char *usage_complete = malloc(strlen(new_usage_string) + strlen(program_name));
-    
     if (usage_complete == NULL)
         return;
-    
     sprintf(usage_complete, new_usage_string, program_name);
-    printf("%s", usage_complete);
-    
+    puts(usage_complete);
     free(usage_complete);
 }
 
