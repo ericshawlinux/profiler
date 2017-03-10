@@ -20,6 +20,8 @@ check:
 	gcc $(CFLAGS) -c -I./src src/pfr_list.h
 	gcc $(CFLAGS) -c -I./src src/pfr_filter.c
 	gcc $(CFLAGS) -c -I./src src/pfr_filter.h
+	gcc $(CFLAGS) -c -I./src src/pfr_cmd.c
+	gcc $(CFLAGS) -c -I./src src/pfr_cmd.h
 
 clean:
 	rm -vf *.o src/*.o src/*.gch
