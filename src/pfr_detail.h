@@ -18,6 +18,9 @@
  * 
  */
 
+#ifndef PFR_DETAIL_DEFINED
+#define PFR_DETAIL_DEFINED
+
 #include <stdio.h>
 
 struct pfr_detail {
@@ -30,7 +33,6 @@ struct pfr_detail {
 int pfr_detail_save(struct pfr_detail *detail, const void *value);
 int pfr_detail_delete(struct pfr_detail);
 
-static int pfr_detail_read(FILE *, struct pfr_detail *target, void **value);
-static int pfr_detail_write(FILE *, struct pfr_detail source, void *value);
+int pfr_detail_read(FILE *, struct pfr_detail *target, void **value);
 
-static int profile_match(struct pfr_detail a, struct pfr_detail b);
+#endif // pfr_detail.h included

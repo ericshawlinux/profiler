@@ -18,22 +18,15 @@
  * 
  */
 
-#ifndef PFR_TYPE_DEFINED
-#define PFR_TYPE_DEFINED
+#ifndef PFR_USAGE_DEFINED
+#define PFR_USAGE_DEFINED
 
-#include <stdio.h>
+const char *usage_string;
+const char *def_usage_string;
+const char *undef_usage_string;
+const char *new_usage_string;
 
-struct pfr_type {
-    int   type_id;
-    char  data_type;
-    int   nsize;
-};
+void usage_fmt_s(const char *fmt, const char *arg1);
+void usage_fmt_ss(const char *fmt, const char *arg1, const char *arg2);
 
-struct pfr_type pfr_type_load(int in_type_id, char **out_type_name);
-int pfr_type_save(struct pfr_type *, const char *name);
-int pfr_type_delete(const char *type_name, int type_id);
-void pfr_type_print();
-
-int pfr_type_read(FILE *fd, struct pfr_type *target, char **name);
-
-#endif // pfr_type.h included
+#endif // pfr_usage.h included

@@ -18,16 +18,16 @@
  * 
  */
 
-#ifndef PFR_DETAIL_DEFINED
-#define PFR_DETAIL_DEFINED
-
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
 
-#include "pfr_detail.h"
-#include "pfr_config.h"
-#include "pfr_disk.c"
+#include <pfr_detail.h>
+#include <pfr_config.h>
+#include <pfr_disk.h>
+
+static int pfr_detail_write(FILE *, struct pfr_detail source, void *value);
+static int profile_match(struct pfr_detail a, struct pfr_detail b);
 
 int pfr_detail_save(struct pfr_detail *detail, const void *value)
 {
@@ -84,7 +84,7 @@ int pfr_detail_delete(struct pfr_detail detail)
     return 1;
 }
 
-static int pfr_detail_read(FILE *fp, struct pfr_detail *target, void **value)
+int pfr_detail_read(FILE *fp, struct pfr_detail *target, void **value)
 {
     return pfr_disk_read(fp, target, sizeof *target, value, &(target->bsize), "detail");
 }
@@ -104,5 +104,3 @@ static int profile_match(struct pfr_detail a, struct pfr_detail b)
     
     return 1;
 }
-
-#endif // pfr_detail included

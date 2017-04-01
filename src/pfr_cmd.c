@@ -18,17 +18,15 @@
  * 
  */
 
-#ifndef PFR_CMD_DEFINED
-#define PFR_CMD_DEFINED
-
 #include <stdlib.h>
 #include <string.h>
 
-#include "pfr_cmd.h"
-#include "pfr_type.c"
-#include "pfr_usage.c"
-#include "pfr_list.c"
-#include "pfr_filter.c"
+#include <pfr_cmd.h>
+#include <pfr_config.h>
+#include <pfr_type.h>
+#include <pfr_usage.h>
+#include <pfr_list.h>
+#include <pfr_filter.h>
 
 #define DATA_TYPE_SIZE 7
 
@@ -55,6 +53,8 @@ struct cmd_struct *get_builtin(const char *s)
     return NULL;
 }
 
+static int arg_id(int argc, const char **argv, int i, unsigned int min, const char *desc);
+static int arg_aquire(int argc, const char **argv, int i, void **target);
 
 void pfr_cmd_type_define(int argc, const char **argv)
 {
@@ -404,5 +404,3 @@ static int arg_aquire(int argc, const char **argv, int i, void **target)
     
     return 1;
 }
-
-#endif

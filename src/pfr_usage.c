@@ -18,9 +18,6 @@
  * 
  */
 
-#ifndef PFR_USAGE
-#define PFR_USAGE
-
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -70,5 +67,3 @@ void usage_fmt_ss(const char *fmt, const char *arg1, const char *arg2)
     puts(usage_complete);
     free(usage_complete);
 }
-
-#endif

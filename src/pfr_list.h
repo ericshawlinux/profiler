@@ -18,8 +18,11 @@
  * 
  */
 
-#include "pfr_type.c"
-#include "pfr_detail.c"
+#ifndef PFR_LIST_DEFINED
+#define PFR_LIST_DEFINED
+
+#include <pfr_type.h>
+#include <pfr_detail.h>
 
 struct node {
     int                 has_type    :1;
@@ -44,3 +47,6 @@ void prepend_list(
 );
 
 void free_list(list *head);
+int list_size(list *head);
+
+#endif // pfr_list.h included

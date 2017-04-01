@@ -18,16 +18,16 @@
  * 
  */
 
-#ifndef PFR_TYPE_DEFINED
-#define PFR_TYPE_DEFINED
-
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
 
-#include "pfr_type.h"
-#include "pfr_config.h"
-#include "pfr_disk.c"
+#include <pfr_type.h>
+#include <pfr_config.h>
+#include <pfr_disk.h>
+
+static int pfr_type_get_state(int *next_id, int *name_exists, const char *name);
+static int pfr_type_write(FILE *fd, const struct pfr_type type, const char *name);
 
 int pfr_type_save(struct pfr_type *type, const char *name)
 {
@@ -133,7 +133,7 @@ static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
     return 1;
 }
 
-static int pfr_type_read(FILE *fp, struct pfr_type *target, char **name)
+int pfr_type_read(FILE *fp, struct pfr_type *target, char **name)
 {
     return pfr_disk_read(fp, target, sizeof *target, (void **) name, &(target->nsize), "type");
 }
@@ -142,5 +142,3 @@ static int pfr_type_write(FILE *fp, struct pfr_type source, const char *name)
 {
     return pfr_disk_write(fp, &source, sizeof source, (void **) name, source.nsize, "type");
 }
-
-#endif // pfr_type included

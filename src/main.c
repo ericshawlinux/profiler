@@ -18,7 +18,9 @@
  * 
  */
 
-#include "pfr_cmd.c"
+#include <stdlib.h>
+#include <pfr_usage.h>
+#include <pfr_cmd.h>
 
 int main(int argc, const char **argv)
 {

@@ -1,30 +1,17 @@
-CFLAGS=-Wall -Wextra
-EXENAME=profiler
+CC			:= gcc
+CFLAGS		:= -Wall -Wextra
+INCLUDES	:= -I./src
+OBJECTS		:= obj/pfr_cmd.o obj/pfr_usage.o obj/pfr_disk.o obj/pfr_list.o obj/pfr_type.o obj/pfr_detail.o obj/pfr_filter.o obj/main.o
+EXENAME		:= profiler
 
-profiler:
-	gcc $(CFLAGS) -o $(EXENAME) src/main.c -I./src/
+$(EXENAME): $(OBJECTS)
+	$(CC) $(INCLUDES) $^ -o $@
 
-debug:
-	gcc $(CFLAGS) -g -o $(EXENAME) src/main.c -I./src/
-
-check:
-	gcc $(CFLAGS) -c -I./src src/main.c
-	gcc $(CFLAGS) -c -I./src src/pfr_config.h
-	gcc $(CFLAGS) -c -I./src src/pfr_type.c
-	gcc $(CFLAGS) -c -I./src src/pfr_type.h
-	gcc $(CFLAGS) -c -I./src src/pfr_detail.c
-	gcc $(CFLAGS) -c -I./src src/pfr_detail.h
-	gcc $(CFLAGS) -c -I./src src/pfr_disk.c
-	gcc $(CFLAGS) -c -I./src src/pfr_usage.c
-	gcc $(CFLAGS) -c -I./src src/pfr_list.c
-	gcc $(CFLAGS) -c -I./src src/pfr_list.h
-	gcc $(CFLAGS) -c -I./src src/pfr_filter.c
-	gcc $(CFLAGS) -c -I./src src/pfr_filter.h
-	gcc $(CFLAGS) -c -I./src src/pfr_cmd.c
-	gcc $(CFLAGS) -c -I./src src/pfr_cmd.h
+obj/%.o: src/%.c
+	$(CC) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -vf *.o src/*.o src/*.gch
+	rm -vf $(OBJECTS)
 	rm -vf $(EXENAME)
 	rm -vf $(EXENAME).exe
 

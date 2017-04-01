@@ -18,9 +18,6 @@
  * 
  */
 
-#ifndef PFR_DISK_DEFINED
-#define PFR_DISK_DEFINED
-
 #include <malloc.h>
 #include <errno.h>
 #include <stdio.h>
@@ -74,5 +71,3 @@ int pfr_disk_write(FILE *fp, const void *source_struct, int source_size, const v
     
     return 1;
 }
-
-#endif

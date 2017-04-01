@@ -18,10 +18,7 @@
  * 
  */
 
-#ifndef PFR_LIST_DEFINED
-#define PFR_LIST_DEFINED
-
-#include "pfr_list.h"
+#include <pfr_list.h>
 
 #include <malloc.h>
 #include <string.h>
@@ -85,5 +82,3 @@ int list_size(list *head)
     
     return count;
 }
-
-#endif // pfr_list.c included

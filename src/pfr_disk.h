@@ -18,22 +18,10 @@
  * 
  */
 
-#ifndef PFR_TYPE_DEFINED
-#define PFR_TYPE_DEFINED
+#ifndef PFR_DISK_DEFINED
+#define PFR_DISK_DEFINED
 
-#include <stdio.h>
+int pfr_disk_read(FILE *fp, void *target_struct, int target_size, void **flex_value, const int *flex_size, const char *err_id);
+int pfr_disk_write(FILE *fp, const void *source_struct, int source_size, const void *flex_value, int flex_size, const char *err_id);
 
-struct pfr_type {
-    int   type_id;
-    char  data_type;
-    int   nsize;
-};
-
-struct pfr_type pfr_type_load(int in_type_id, char **out_type_name);
-int pfr_type_save(struct pfr_type *, const char *name);
-int pfr_type_delete(const char *type_name, int type_id);
-void pfr_type_print();
-
-int pfr_type_read(FILE *fd, struct pfr_type *target, char **name);
-
-#endif // pfr_type.h included
+#endif // pfr_disk.h included

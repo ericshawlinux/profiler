@@ -18,12 +18,17 @@
  * 
  */
 
+#ifndef PFR_CMD_DEFINED
+#define PFR_CMD_DEFINED
+
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 struct cmd_struct {
     const char *cmd;
     void (*fn)(int argc, const char **argv);
 };
+
+struct cmd_struct *get_builtin(const char *s);
 
 void pfr_cmd_type_define(int argc, const char **argv);
 void pfr_cmd_type_undefine(int argc, const char **argv);
@@ -35,5 +40,4 @@ void pfr_cmd_help(int argc, const char **argv);
 void pfr_cmd_type_define(int argc, const char **argv);
 void pfr_cmd_type_undefine(int argc, const char **argv);
 
-static int arg_id(int argc, const char **argv, int i, unsigned int min, const char *desc);
-static int arg_aquire(int argc, const char **argv, int i, void **target);
+#endif // pfr_cmd.h included
