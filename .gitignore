@@ -1,7 +1,5 @@
-data/types.tmp
-data/profiles.dat
-data/profiles.tmp
-data/types.dat
+data/*
+profiler
 
 # Prerequisites
 *.d
