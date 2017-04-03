@@ -21,9 +21,10 @@
 #include <stdlib.h>
 #include <pfr_usage.h>
 #include <pfr_cmd.h>
+#include <pfr_files.h>
 
 int main(int argc, const char **argv)
-{
+{    
     struct cmd_struct *cmd = NULL;
     
     if (argc >= 2)
@@ -33,7 +34,10 @@ int main(int argc, const char **argv)
         usage_fmt_ss(usage_string, argv[0], argv[0]);
         
     else
+    {
+        init_all_files();
         cmd->fn(argc, argv);
+    }
     
     return 0;
 }
