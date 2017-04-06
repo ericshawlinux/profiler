@@ -25,7 +25,13 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef __linux__
 #include <pwd.h>
+#elif defined _WIN32
+#include <windows.h>
+#else
+#error "Platform not supported"
+#endif
 
 #include <pfr_files.h>
 
@@ -44,7 +50,13 @@ int init_all_files()
 {
     // create the data directory
     char *data_dir = _get_file_path(NULL);
-    if (mkdir(data_dir, DATA_DIR_PERMISSIONS) == -1 && errno != EEXIST)
+#ifdef __linux__
+	if (mkdir(data_dir, DATA_DIR_PERMISSIONS) == -1 && errno != EEXIST)
+#elif defined _WIN32
+	if (!CreateDirectory(data_dir, NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
+#else
+#error "Platform not supported"
+#endif
     {
         perror("Error creating data directory");
         return 0;
@@ -92,49 +104,29 @@ static int _init_file(const char *file_path)
 char *_get_file_path(char *file_name)
 {
     const char *home_dir = _get_home_dir();
-    printf("\tCALL GET FILE PATH\n\n");
-    printf("home dir: %s\n", home_dir);
-    printf("file_name: %s\n", file_name);
     char *path = NULL;
     path = malloc(strlen(home_dir) + 1);
+    memset(path, 0, strlen(home_dir) + 1);
     if (path == NULL)
     {
         return NULL;
     }
     strncpy(path, home_dir, strlen(home_dir));
-    printf("home dir: %s\n", home_dir);
-    printf("file_name: %s\n", file_name);
-    printf("path: %s\n",path);
     _concat_path(&path, ".profiler");
-    printf("home dir: %s\n", home_dir);
-    printf("file_name: %s\n", file_name);
-    printf("path: %s\n",path);
     if (file_name == NULL)
     {
-        printf("\tRETURN GET FILE PATH\n\n");
         return path;
     }
-    printf("home dir: %s\n", home_dir);
-    printf("file_name: %s\n", file_name);
-    printf("path: %s\n",path);
     _concat_path(&path, file_name);
-    printf("home dir: %s\n", home_dir);
-    printf("file_name: %s\n", file_name);
-    printf("path: %s\n",path);
-    printf("\tRETURN GET FILE PATH\n\n");
     return path;
 }
 
 /* Concatenates two paths with an OS dependent separator. current should be in the heap */
 void _concat_path(char **current, char *path)
 {
-    printf("\tCALL CONCAT PATH\n\n");
-    printf("input: %s arg: %s\n", *current, path);
     *current = realloc(*current, strlen(*current) + strlen(path) + PATH_SEPARATOR_LENGTH + 1);
     strcat(*current, PATH_SEPARATOR);
     strcat(*current, path);
-    printf("output: %s\n", *current);
-    printf("\tRETURN CONCAT\n\n");
 }
 
 /* Gets the user's personal directory. */

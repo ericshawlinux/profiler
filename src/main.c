@@ -33,11 +33,8 @@ int main(int argc, const char **argv)
     if (cmd == NULL)
         usage_fmt_ss(usage_string, argv[0], argv[0]);
         
-    else
-    {
-        init_all_files();
-        //cmd->fn(argc, argv);
-    }
+    else if (init_all_files())
+        cmd->fn(argc, argv);
     
     return 0;
 }
