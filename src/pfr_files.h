@@ -18,23 +18,31 @@
  * 
  */
 
-#include <stdlib.h>
-#include <pfr_usage.h>
-#include <pfr_cmd.h>
-#include <pfr_files.h>
+#ifndef PFR_FILES_DEFINED
+#define PFR_FILES_DEFINED
 
-int main(int argc, const char **argv)
-{    
-    struct cmd_struct *cmd = NULL;
-    
-    if (argc >= 2)
-        cmd = get_builtin(argv[1]);
-    
-    if (cmd == NULL)
-        usage_fmt_ss(usage_string, argv[0], argv[0]);
-        
-    else if (init_all_files())
-        cmd->fn(argc, argv);
-    
-    return 0;
-}
+#include <sys/types.h>
+
+/* Paths to data files, which need initialized. */
+extern char *detail_file_path,
+            *type_file_path,
+            *tmp_detail_file_path,
+            *tmp_type_file_path;
+
+/* Initializes all of the data files in the user's directory. Returns true if it worked*/
+int init_all_files();
+
+/* Constants for OS dependent paths. */
+#ifdef __linux__
+#define PATH_SEPARATOR "/"
+#define PATH_SEPARATOR_LENGTH 1
+#elif defined _WIN32
+#define PATH_SEPARATOR "\\"
+#define PATH_SEPARATOR_LENGTH 2
+#else
+#error "Platform not supported"
+#endif
+
+#define DATA_DIR_PERMISSIONS S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+
+#endif // pfr_files.h included

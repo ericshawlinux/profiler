@@ -23,7 +23,7 @@
 #include <stdio.h>
 
 #include <pfr_type.h>
-#include <pfr_config.h>
+#include <pfr_files.h>
 #include <pfr_disk.h>
 
 static int pfr_type_get_state(int *next_id, int *name_exists, const char *name);
@@ -31,7 +31,7 @@ static int pfr_type_write(FILE *fd, const struct pfr_type type, const char *name
 
 int pfr_type_save(struct pfr_type *type, const char *name)
 {
-    int name_exists = 0, next_id = PFR_CFG_TYPE_FIRST_ID;
+    int name_exists = 0, next_id = 1;
     
     if (!pfr_type_get_state(&next_id, &name_exists, name))
         return 0;
@@ -43,7 +43,7 @@ int pfr_type_save(struct pfr_type *type, const char *name)
     
     type->type_id = next_id;
     
-    FILE *fp = fopen(PFR_CFG_TYPE_FILE, "ab");
+    FILE *fp = fopen(type_file_path, "ab");
     
     if (fp == NULL) {
         perror("Error opening type file for saving");
@@ -61,8 +61,8 @@ int pfr_type_save(struct pfr_type *type, const char *name)
 
 int pfr_type_delete(const char *type_name, int type_id)
 {
-    FILE *origin = fopen(PFR_CFG_TYPE_FILE, "rb");
-    FILE *dest = fopen(PFR_CFG_TYPE_TEMP_FILE, "wb");
+    FILE *origin = fopen(type_file_path, "rb");
+    FILE *dest = fopen(tmp_type_file_path, "wb");
 
     if (origin == NULL || dest == NULL) {
         perror("Error opening type files");
@@ -91,8 +91,8 @@ int pfr_type_delete(const char *type_name, int type_id)
     fclose(origin);
     fclose(dest);
 
-    remove(PFR_CFG_TYPE_FILE);
-    rename(PFR_CFG_TYPE_TEMP_FILE, PFR_CFG_TYPE_FILE);
+    remove(type_file_path);
+    rename(tmp_type_file_path, type_file_path);
     
     free(current_name);
     
@@ -109,7 +109,7 @@ void pfr_type_print(struct pfr_type type, const char *type_name, int print_heade
 
 static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
 {
-    FILE *fp = fopen(PFR_CFG_TYPE_FILE, "rb");
+    FILE *fp = fopen(type_file_path, "rb");
 
     if (fp == NULL) {
         perror("Error opening type file for reading");

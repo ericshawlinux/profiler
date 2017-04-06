@@ -20,7 +20,7 @@
 
 #include <pfr_filter.h>
 #include <pfr_list.h>
-#include <pfr_config.h>
+#include <pfr_files.h>
 #include <pfr_type.h>
 #include <pfr_detail.h>
 
@@ -51,7 +51,7 @@ list *pfr_type_filter(struct pfr_type search, const char *type_name, int filter_
     struct pfr_type current = {0};
     char *current_name      = NULL;
     
-    FILE *type_fp = fopen(PFR_CFG_TYPE_FILE, "rb");
+    FILE *type_fp = fopen(type_file_path, "rb");
     
     if (type_fp == NULL)
         perror("Error in type filter");
@@ -97,7 +97,7 @@ list *pfr_detail_filter(struct pfr_type type_search, const char *type_name,
     struct pfr_type     current_type    = {0};
     char                *current_name   = NULL;
     
-    FILE *detail_fp = fopen(PFR_CFG_DATA_FILE, "rb");
+    FILE *detail_fp = fopen(detail_file_path, "rb");
     
     if (detail_fp == NULL)
         perror("Error in detail filter");

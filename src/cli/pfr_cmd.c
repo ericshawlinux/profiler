@@ -22,7 +22,6 @@
 #include <string.h>
 
 #include <pfr_cmd.h>
-#include <pfr_config.h>
 #include <pfr_type.h>
 #include <pfr_usage.h>
 #include <pfr_list.h>
@@ -117,7 +116,7 @@ void pfr_cmd_type_undefine(int argc, const char **argv)
         {
             filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
             
-            type_id = arg_id(argc, argv, ++i, PFR_CFG_TYPE_FIRST_ID, "type");
+            type_id = arg_id(argc, argv, ++i, 1, "type");
             
             if (type_id == -1)
                 return;
@@ -178,7 +177,7 @@ void pfr_cmd_type_show(int argc, const char **argv)
             }
             
             // try to get the type-id value
-            type_id_filter = arg_id(argc, argv, ++i, PFR_CFG_TYPE_FIRST_ID, "type");
+            type_id_filter = arg_id(argc, argv, ++i, 1, "type");
             if (type_id_filter == -1)
                 return;
         }
@@ -267,7 +266,7 @@ void pfr_cmd_detail_new(int argc, const char **argv)
     {
         if (profile_id == 0 && !strcmp(argv[i], "--profile-id"))
         {
-            profile_id = arg_id(argc, argv, ++i, PFR_CFG_PROFILE_FIRST_ID, "profile");
+            profile_id = arg_id(argc, argv, ++i, 1, "profile");
             if (profile_id == -1)
                 return;
         }
@@ -275,7 +274,7 @@ void pfr_cmd_detail_new(int argc, const char **argv)
         else if (type_id == 0 && !strcmp(argv[i], "--type-id"))
         {
             filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
-            type_id = arg_id(argc, argv, ++i, PFR_CFG_TYPE_FIRST_ID, "type");
+            type_id = arg_id(argc, argv, ++i, 1, "type");
             if (type_id == -1)
                 return;
         }

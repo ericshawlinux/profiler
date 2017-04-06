@@ -23,7 +23,7 @@
 #include <stdio.h>
 
 #include <pfr_detail.h>
-#include <pfr_config.h>
+#include <pfr_files.h>
 #include <pfr_disk.h>
 
 static int pfr_detail_write(FILE *, struct pfr_detail source, void *value);
@@ -31,7 +31,7 @@ static int profile_match(struct pfr_detail a, struct pfr_detail b);
 
 int pfr_detail_save(struct pfr_detail *detail, const void *value)
 {
-    FILE *fp = fopen(PFR_CFG_DATA_FILE, "ab");
+    FILE *fp = fopen(detail_file_path, "ab");
     
     if (fp == NULL) {
         perror("Error opening detail file for saving");
@@ -49,8 +49,8 @@ int pfr_detail_save(struct pfr_detail *detail, const void *value)
 
 int pfr_detail_delete(struct pfr_detail detail)
 {
-    FILE *origin = fopen(PFR_CFG_DATA_FILE, "rb");
-    FILE *dest = fopen(PFR_CFG_DATA_TEMP_FILE, "wb");
+    FILE *origin = fopen(detail_file_path, "rb");
+    FILE *dest = fopen(tmp_detail_file_path, "wb");
 
     if (origin == NULL || dest == NULL) {
         perror("Error opening type files");
@@ -76,8 +76,8 @@ int pfr_detail_delete(struct pfr_detail detail)
     fclose(origin);
     fclose(dest);
 
-    remove(PFR_CFG_DATA_FILE);
-    rename(PFR_CFG_DATA_FILE, PFR_CFG_DATA_TEMP_FILE);
+    remove(detail_file_path);
+    rename(tmp_detail_file_path, detail_file_path);
     
     free(current_value);
     
