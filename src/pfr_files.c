@@ -41,15 +41,15 @@ char    *detail_file_path       = NULL,
         *tmp_detail_file_path   = NULL,
         *tmp_type_file_path     = NULL;
 
-char *_get_file_path(char *file_name);
-void _concat_path(char **current, char *path);
-static const char *_get_home_dir();
-static int _init_file(const char *file_path);
+static char *get_file_path(char *file_name);
+static void concat_path(char **current, char *path);
+static const char *get_home_dir();
+static int init_file(const char *file_path);
 
 int init_all_files()
 {
     // create the data directory
-    char *data_dir = _get_file_path(NULL);
+    char *data_dir = get_file_path(NULL);
 #ifdef __linux__
 	if (mkdir(data_dir, DATA_DIR_PERMISSIONS) == -1 && errno != EEXIST)
 #elif defined _WIN32
@@ -64,26 +64,26 @@ int init_all_files()
     free(data_dir);
     
     // set globals, to use in rest of program
-    detail_file_path        = _get_file_path("details.dat");
-    tmp_detail_file_path    = _get_file_path("details.tmp");
-    type_file_path          = _get_file_path("types.dat");
-    tmp_type_file_path      = _get_file_path("types.tmp");
+    detail_file_path        = get_file_path("details.dat");
+    tmp_detail_file_path    = get_file_path("details.tmp");
+    type_file_path          = get_file_path("types.dat");
+    tmp_type_file_path      = get_file_path("types.tmp");
     
     // try to create the files
-    if (!_init_file(detail_file_path))
+    if (!init_file(detail_file_path))
         return 0;
-    if (!_init_file(tmp_detail_file_path))
+    if (!init_file(tmp_detail_file_path))
         return 0;
-    if (!_init_file(type_file_path))
+    if (!init_file(type_file_path))
         return 0;
-    if (!_init_file(tmp_type_file_path))
+    if (!init_file(tmp_type_file_path))
         return 0;
     
     return 1;
 }
 
 /* Initializes one file, given the filename. */
-static int _init_file(const char *file_path)
+static int init_file(const char *file_path)
 {
     if (file_path == NULL)
         return 0;
@@ -101,9 +101,9 @@ static int _init_file(const char *file_path)
  * Returns a path to the data directory if file_name is NULL.
  * Otherwise, returns a path to that file in the data directory.
  */
-char *_get_file_path(char *file_name)
+static char *get_file_path(char *file_name)
 {
-    const char *home_dir = _get_home_dir();
+    const char *home_dir = get_home_dir();
     char *path = NULL;
     path = malloc(strlen(home_dir) + 1);
     memset(path, 0, strlen(home_dir) + 1);
@@ -112,17 +112,17 @@ char *_get_file_path(char *file_name)
         return NULL;
     }
     strncpy(path, home_dir, strlen(home_dir));
-    _concat_path(&path, ".profiler");
+    concat_path(&path, ".profiler");
     if (file_name == NULL)
     {
         return path;
     }
-    _concat_path(&path, file_name);
+    concat_path(&path, file_name);
     return path;
 }
 
 /* Concatenates two paths with an OS dependent separator. current should be in the heap */
-void _concat_path(char **current, char *path)
+static void concat_path(char **current, char *path)
 {
     *current = realloc(*current, strlen(*current) + strlen(path) + PATH_SEPARATOR_LENGTH + 1);
     strcat(*current, PATH_SEPARATOR);
@@ -130,7 +130,7 @@ void _concat_path(char **current, char *path)
 }
 
 /* Gets the user's personal directory. */
-static const char *_get_home_dir()
+static const char *get_home_dir()
 {
 #ifdef _WIN32
     return getenv("APPDATA");
