@@ -7,20 +7,12 @@ EXENAME  := profiler
 vpath %.c src src/cli src/record src/record/filter
 
 $(EXENAME): $(OBJECTS)
-	$(CC) $(INCLUDES) $^ -o $@
+	$(CC) $(INCLUDES) $(CFLAGS) $^ -o $@
 
 obj/%.o: %.c
-	$(CC) $(INCLUDES) -c $< -o $@
+	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -vf $(OBJECTS)
 	rm -vf $(EXENAME)
 	rm -vf $(EXENAME).exe
-
-touch:
-	touch data/types.dat data/types.tmp
-	touch data/profiles.dat data/profiles.tmp
-
-trunc:
-	truncate --size 0 data/types.dat data/types.tmp
-	truncate --size 0 data/profiles.dat data/profiles.tmp

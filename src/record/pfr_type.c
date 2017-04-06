@@ -43,7 +43,7 @@ int pfr_type_save(struct pfr_type *type, const char *name)
     
     type->type_id = next_id;
     
-    FILE *fp = fopen(get_type_file(), "ab");
+    FILE *fp = fopen(type_file_path, "ab");
     
     if (fp == NULL) {
         perror("Error opening type file for saving");
@@ -61,8 +61,8 @@ int pfr_type_save(struct pfr_type *type, const char *name)
 
 int pfr_type_delete(const char *type_name, int type_id)
 {
-    FILE *origin = fopen(get_type_file(), "rb");
-    FILE *dest = fopen(get_tmp_type_file(), "wb");
+    FILE *origin = fopen(type_file_path, "rb");
+    FILE *dest = fopen(tmp_type_file_path, "wb");
 
     if (origin == NULL || dest == NULL) {
         perror("Error opening type files");
@@ -91,8 +91,8 @@ int pfr_type_delete(const char *type_name, int type_id)
     fclose(origin);
     fclose(dest);
 
-    remove(get_type_file());
-    rename(get_tmp_type_file(), get_type_file());
+    remove(type_file_path);
+    rename(tmp_type_file_path, type_file_path);
     
     free(current_name);
     
@@ -109,7 +109,7 @@ void pfr_type_print(struct pfr_type type, const char *type_name, int print_heade
 
 static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
 {
-    FILE *fp = fopen(get_type_file(), "rb");
+    FILE *fp = fopen(type_file_path, "rb");
 
     if (fp == NULL) {
         perror("Error opening type file for reading");

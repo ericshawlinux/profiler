@@ -31,7 +31,7 @@ static int profile_match(struct pfr_detail a, struct pfr_detail b);
 
 int pfr_detail_save(struct pfr_detail *detail, const void *value)
 {
-    FILE *fp = fopen(get_detail_file(), "ab");
+    FILE *fp = fopen(detail_file_path, "ab");
     
     if (fp == NULL) {
         perror("Error opening detail file for saving");
@@ -49,8 +49,8 @@ int pfr_detail_save(struct pfr_detail *detail, const void *value)
 
 int pfr_detail_delete(struct pfr_detail detail)
 {
-    FILE *origin = fopen(get_detail_file(), "rb");
-    FILE *dest = fopen(get_tmp_detail_file(), "wb");
+    FILE *origin = fopen(detail_file_path, "rb");
+    FILE *dest = fopen(tmp_detail_file_path, "wb");
 
     if (origin == NULL || dest == NULL) {
         perror("Error opening type files");
@@ -76,8 +76,8 @@ int pfr_detail_delete(struct pfr_detail detail)
     fclose(origin);
     fclose(dest);
 
-    remove(get_detail_file());
-    rename(get_tmp_detail_file(), get_detail_file());
+    remove(detail_file_path);
+    rename(tmp_detail_file_path, detail_file_path);
     
     free(current_value);
     

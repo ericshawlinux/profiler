@@ -36,7 +36,7 @@ int main(int argc, const char **argv)
     else
     {
         init_all_files();
-        cmd->fn(argc, argv);
+        //cmd->fn(argc, argv);
     }
     
     return 0;
