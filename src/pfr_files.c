@@ -106,11 +106,11 @@ static char *get_file_path(char *file_name)
     const char *home_dir = get_home_dir();
     char *path = NULL;
     path = malloc(strlen(home_dir) + 1);
-    memset(path, 0, strlen(home_dir) + 1);
     if (path == NULL)
     {
         return NULL;
     }
+    memset(path, 0, strlen(home_dir) + 1);
     strncpy(path, home_dir, strlen(home_dir));
     concat_path(&path, ".profiler");
     if (file_name == NULL)
