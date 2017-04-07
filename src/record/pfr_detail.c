@@ -26,8 +26,58 @@
 #include <pfr_files.h>
 #include <pfr_disk.h>
 
-static int pfr_detail_write(FILE *, struct pfr_detail source, void *value);
+static int pfr_detail_write(FILE *, struct pfr_detail source, const void *value);
 static int profile_match(struct pfr_detail a, struct pfr_detail b);
+
+int pfr_detail_get_next_profile_id()
+{
+    int next_id = 1;
+
+    FILE *fp = fopen(detail_file_path, "r");
+
+    if (fp == NULL) {
+        perror("Error opening detail file for reading");
+        return 0;
+    }
+    
+    struct pfr_detail current = {0};
+    void *current_value = NULL;
+    
+    while (pfr_detail_read(fp, &current, &current_value))
+    {
+        if (current.profile_id >= next_id) {
+            next_id = current.profile_id + 1;
+        }
+    }
+
+    fclose(fp);
+    return next_id;
+}
+
+int pfr_detail_get_next_detail_id(int profile_id)
+{
+    int next_id = 1;
+
+    FILE *fp = fopen(detail_file_path, "r");
+
+    if (fp == NULL) {
+        perror("Error opening detail file for reading");
+        return 0;
+    }
+    
+    struct pfr_detail current = {0};
+    void *current_value = NULL;
+    
+    while (pfr_detail_read(fp, &current, &current_value))
+    {
+        if (current.profile_id == profile_id && current.detail_id >= next_id) {
+            next_id = current.detail_id + 1;
+        }
+    }
+
+    fclose(fp);
+    return next_id;
+}
 
 int pfr_detail_save(struct pfr_detail *detail, const void *value)
 {
@@ -38,7 +88,7 @@ int pfr_detail_save(struct pfr_detail *detail, const void *value)
         return 0;
     }
     
-    if (!pfr_detail_write(fp, *detail, &value)) {
+    if (!pfr_detail_write(fp, *detail, value)) {
         fclose(fp);
         return 0;
     }
@@ -89,7 +139,7 @@ int pfr_detail_read(FILE *fp, struct pfr_detail *target, void **value)
     return pfr_disk_read(fp, target, sizeof *target, value, &(target->bsize), "detail");
 }
 
-static int pfr_detail_write(FILE *fp, struct pfr_detail source, void *value)
+static int pfr_detail_write(FILE *fp, struct pfr_detail source, const void *value)
 {
     return pfr_disk_write(fp, &source, sizeof source, value, source.bsize, "detail");
 }

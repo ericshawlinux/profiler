@@ -30,6 +30,9 @@ struct pfr_detail {
     int bsize;
 };
 
+int pfr_detail_get_next_profile_id();
+int pfr_detail_get_next_detail_id(int profile_id);
+
 int pfr_detail_save(struct pfr_detail *detail, const void *value);
 int pfr_detail_delete(struct pfr_detail);
 

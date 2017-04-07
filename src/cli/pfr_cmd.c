@@ -310,6 +310,8 @@ void pfr_cmd_detail_new(int argc, const char **argv)
     
     matching_types = pfr_type_filter(type, type_name, filter_mode);
     
+    detail.type_id = matching_types->type.type_id;
+    
     if (matching_types == NULL) {
         printf("error: the specified type was not found.\n");
         return;
@@ -318,9 +320,15 @@ void pfr_cmd_detail_new(int argc, const char **argv)
     // if no profile id is specified we need to get the next profile id
     // then get the next detail id for that profile id
     if (profile_id > 0)
+    {
         detail.profile_id = profile_id;
-        
-    detail.type_id = matching_types->type.type_id;
+        detail.detail_id = 1;
+    }
+    else
+    {
+        detail.profile_id = pfr_detail_get_next_profile_id();
+        detail.detail_id = pfr_detail_get_next_detail_id(detail.profile_id);
+    }
     
     pfr_detail_save(&detail, value);
     
