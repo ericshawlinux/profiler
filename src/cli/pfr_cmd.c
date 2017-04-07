@@ -158,10 +158,10 @@ void pfr_cmd_type_show(int argc, const char **argv)
         if (type_id_filter == 0 && str_starts_with(argv[i], "--type-id"))
         {
             if (!strcmp(argv[i], "--type-id-lte"))
-                filter_mode |= FILTER_MODE_TYPE_ID_LTE;
+                filter_mode |= (FILTER_MODE_TYPE_ID_LESS_THAN | FILTER_MODE_TYPE_ID_EQUALS);
             
             else if (!strcmp(argv[i], "--type-id-gte"))
-                filter_mode |= FILTER_MODE_TYPE_ID_GTE;
+                filter_mode |= FILTER_MODE_TYPE_ID_GRTR_THAN | FILTER_MODE_TYPE_ID_EQUALS;
             
             else if (!strcmp(argv[i], "--type-id-lt"))
                 filter_mode |= FILTER_MODE_TYPE_ID_LESS_THAN;

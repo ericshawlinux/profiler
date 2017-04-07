@@ -41,9 +41,17 @@ char    *detail_file_path       = NULL,
         *tmp_detail_file_path   = NULL,
         *tmp_type_file_path     = NULL;
 
+/* Returns a path to the data directory if file_name is NULL.
+ * Otherwise, returns a path to that file in the data directory. */
 static char *get_file_path(char *file_name);
+
+/* Concatenates two paths with an OS dependent separator. current should be in the heap */
 static void concat_path(char **current, char *path);
+
+/* Gets the user's personal directory. */
 static const char *get_home_dir();
+
+/* Initializes one file, given the filename. */
 static int init_file(const char *file_path);
 
 int init_all_files()
@@ -82,7 +90,6 @@ int init_all_files()
     return 1;
 }
 
-/* Initializes one file, given the filename. */
 static int init_file(const char *file_path)
 {
     if (file_path == NULL)
@@ -97,10 +104,6 @@ static int init_file(const char *file_path)
     return 1;
 }
 
-/* 
- * Returns a path to the data directory if file_name is NULL.
- * Otherwise, returns a path to that file in the data directory.
- */
 static char *get_file_path(char *file_name)
 {
     const char *home_dir = get_home_dir();
@@ -121,7 +124,6 @@ static char *get_file_path(char *file_name)
     return path;
 }
 
-/* Concatenates two paths with an OS dependent separator. current should be in the heap */
 static void concat_path(char **current, char *path)
 {
     *current = realloc(*current, strlen(*current) + strlen(path) + PATH_SEPARATOR_LENGTH + 1);
@@ -129,7 +131,6 @@ static void concat_path(char **current, char *path)
     strcat(*current, path);
 }
 
-/* Gets the user's personal directory. */
 static const char *get_home_dir()
 {
 #ifdef _WIN32

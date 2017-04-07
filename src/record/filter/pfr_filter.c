@@ -126,36 +126,58 @@ static int pfr_type_matches_filter(struct pfr_type a, const char *a_name,
 {
     /** Type ID Filters ***************************************/
     
-    if (filter_mode & FILTER_MODE_TYPE_ID_LTE && a.type_id > b.type_id)
-        return FALSE;
-        
-    else if (filter_mode & FILTER_MODE_TYPE_ID_GTE && a.type_id < b.type_id)
-        return FALSE;
-    
-    else if (filter_mode & FILTER_MODE_TYPE_ID_EQUALS && a.type_id != b.type_id)
-        return FALSE;
-        
-    else if (filter_mode & FILTER_MODE_TYPE_ID_LESS_THAN && a.type_id >= b.type_id)
-        return FALSE;
-    
-    else if (filter_mode & FILTER_MODE_TYPE_ID_GRTR_THAN && a.type_id <= b.type_id)
-        return FALSE;
+    if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_TYPE_ID_LESS_THAN, FILTER_MODE_TYPE_ID_EQUALS))
+    {
+        if (a.type_id > b.type_id)
+            return FALSE;
+    }   
+    else if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_TYPE_ID_GRTR_THAN, FILTER_MODE_TYPE_ID_EQUALS))
+    {
+        if (a.type_id < b.type_id)
+            return FALSE;
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TYPE_ID_EQUALS))
+    {
+        if (a.type_id != b.type_id)
+            return FALSE;
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TYPE_ID_LESS_THAN))
+    {
+        if (a.type_id >= b.type_id)
+            return FALSE;
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TYPE_ID_GRTR_THAN))
+    {
+        if (a.type_id <= b.type_id)
+            return FALSE;
+    }
         
     /** Data Type Equals **************************************/
     
-    if (filter_mode & FILTER_MODE_DATA_TYPE_EQUALS && a.data_type != b.data_type)
-        return FALSE;
-    
+    if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_DATA_TYPE_EQUALS))
+    {
+        if(a.data_type != b.data_type)
+            return FALSE;
+    }
     /** Type Name Filters *************************************/
     
-    if (filter_mode & FILTER_MODE_TYPE_NAME_STARTS_WITH && !str_starts_with(a_name, b_name))
-        return FALSE;
-
-    else if (filter_mode & FILTER_MODE_TYPE_NAME_CONTAINS && strstr(a_name, b_name) == NULL)
-        return FALSE;
-
-    else if (filter_mode & FILTER_MODE_TYPE_NAME_EQUALS && strcmp(a_name, b_name) != 0)
-        return FALSE;
+    if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TYPE_NAME_STARTS_WITH))
+    {
+        if(!str_starts_with(a_name, b_name))
+            return FALSE;
+    }
+    
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TYPE_NAME_CONTAINS))
+    {
+        if(strstr(a_name, b_name) == NULL)
+            return FALSE;
+    }
+    
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TYPE_NAME_EQUALS))
+    {
+        if(strcmp(a_name, b_name) != 0)
+            return FALSE;
+    }
     
     return TRUE;
 }
@@ -168,87 +190,105 @@ static int pfr_detail_matches_filter(struct pfr_detail a, void *a_value,
     
     /** Profile ID Filters ************************************/
 
-    if (filter_mode & FILTER_MODE_PROFILE_ID_LTE)
+    if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_PROFILE_ID_LESS_THAN, FILTER_MODE_PROFILE_ID_EQUALS))
+    {
         if (a.profile_id > b.profile_id)
             return FALSE;
-    
-    if (filter_mode & FILTER_MODE_PROFILE_ID_GTE)
+    }
+    else if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_PROFILE_ID_GRTR_THAN, FILTER_MODE_PROFILE_ID_EQUALS))
+    {
         if (a.profile_id < b.profile_id)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_PROFILE_ID_EQUALS)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_PROFILE_ID_EQUALS))
+    {
         if (a.profile_id != b.profile_id)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_PROFILE_ID_LESS_THAN)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_PROFILE_ID_LESS_THAN))
+    {
         if (a.profile_id >= b.profile_id)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_PROFILE_ID_GRTR_THAN)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_PROFILE_ID_GRTR_THAN))
+    {
         if (a.profile_id <= b.profile_id)
             return FALSE;
-
+    }
     /** Detail ID Filters ************************************/
-    
-    if (filter_mode & FILTER_MODE_DETAIL_ID_LTE)
+
+    if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_DETAIL_ID_LESS_THAN, FILTER_MODE_DETAIL_ID_EQUALS))
+    {
         if (a.detail_id > b.detail_id)
             return FALSE;
-    
-    if (filter_mode & FILTER_MODE_DETAIL_ID_GTE)
+    }
+    else if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_DETAIL_ID_GRTR_THAN, FILTER_MODE_DETAIL_ID_EQUALS))
+    {
         if (a.detail_id < b.detail_id)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_DETAIL_ID_EQUALS)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_DETAIL_ID_EQUALS))
+    {
         if (a.detail_id != b.detail_id)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_DETAIL_ID_LESS_THAN)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_DETAIL_ID_LESS_THAN))
+    {
         if (a.detail_id >= b.detail_id)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_DETAIL_ID_GRTR_THAN)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_DETAIL_ID_GRTR_THAN))
+    {
         if (a.detail_id <= b.detail_id)
             return FALSE;
-
+    }
     /** Number and Date Value Filters ************************/
-    
-    if (filter_mode & FILTER_MODE_NUMBER_LTE)
+
+    if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_NUMBER_LESS_THAN, FILTER_MODE_NUMBER_EQUALS))
+    {
         if (a_value_copy > b_value_copy)
             return FALSE;
-    
-    if (filter_mode & FILTER_MODE_NUMBER_GTE)
+    }
+    else if (FILTER_MODE_COMPOUND_MATCH(filter_mode, FILTER_MODE_NUMBER_GRTR_THAN, FILTER_MODE_NUMBER_EQUALS))
+    {
         if (a_value_copy < b_value_copy)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_NUMBER_EQUALS)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_NUMBER_EQUALS))
+    {
         if (a_value_copy != b_value_copy)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_NUMBER_LESS_THAN)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_NUMBER_LESS_THAN))
+    {
         if (a_value_copy >= b_value_copy)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_NUMBER_GRTR_THAN)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_NUMBER_GRTR_THAN))
+    {
         if (a_value_copy <= b_value_copy)
             return FALSE;
-
+    }
     /** Text Value Filters ************************************/
-    
-    if (filter_mode & FILTER_MODE_TEXT_STARTS_WITH)
+
+    if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TEXT_STARTS_WITH))
+    {
         if (!str_starts_with(a_value, b_value))
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_TEXT_CONTAINS)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TEXT_CONTAINS))
+    {
         if (strstr(a_value, b_value) == NULL)
             return FALSE;
-
-    if (filter_mode & FILTER_MODE_TEXT_EQUALS)
+    }
+    else if (FILTER_MODE_MATCH(filter_mode, FILTER_MODE_TEXT_EQUALS))
+    {
         if (strcmp(a_value, b_value) != 0)
             return FALSE;
+    }
 
     return TRUE;
 }
-
 
 int str_starts_with(const char *str, const char *pre)
 {

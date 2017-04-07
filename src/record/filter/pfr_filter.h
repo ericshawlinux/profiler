@@ -32,8 +32,6 @@
 #define FILTER_MODE_TYPE_ID_EQUALS          0x001
 #define FILTER_MODE_TYPE_ID_LESS_THAN       0x002
 #define FILTER_MODE_TYPE_ID_GRTR_THAN       0x004
-#define FILTER_MODE_TYPE_ID_LTE            (0x001 | 0x002)
-#define FILTER_MODE_TYPE_ID_GTE            (0x001 | 0x004)
 
 #define FILTER_MODE_DATA_TYPE_EQUALS        0x010
 
@@ -46,24 +44,25 @@
 #define FILTER_MODE_PROFILE_ID_EQUALS       0x000100
 #define FILTER_MODE_PROFILE_ID_LESS_THAN    0x000200
 #define FILTER_MODE_PROFILE_ID_GRTR_THAN    0x000400
-#define FILTER_MODE_PROFILE_ID_LTE         (0x000100 | 0x000200)
-#define FILTER_MODE_PROFILE_ID_GTE         (0x000100 | 0x000400)
 
 #define FILTER_MODE_DETAIL_ID_EQUALS        0x001000
 #define FILTER_MODE_DETAIL_ID_LESS_THAN     0x002000
 #define FILTER_MODE_DETAIL_ID_GRTR_THAN     0x004000
-#define FILTER_MODE_DETAIL_ID_LTE          (0x001000 | 0x002000)
-#define FILTER_MODE_DETAIL_ID_GTE          (0x001000 | 0x004000)
 
 #define FILTER_MODE_NUMBER_EQUALS           0x010000
 #define FILTER_MODE_NUMBER_LESS_THAN        0x020000
 #define FILTER_MODE_NUMBER_GRTR_THAN        0x040000
-#define FILTER_MODE_NUMBER_LTE             (0x010000 | 0x020000)
-#define FILTER_MODE_NUMBER_GTE             (0x010000 | 0x040000)
 
 #define FILTER_MODE_TEXT_EQUALS             0x100000
 #define FILTER_MODE_TEXT_CONTAINS           0x200000
 #define FILTER_MODE_TEXT_STARTS_WITH        0x400000
+
+/* used to determine the current filter, order of usage still matters.
+ * first, use FILTER_MODE_COMPOUND_MATCH for lte, gte.
+ * then, use FILTER_MODE_MATCH. */
+ 
+#define FILTER_MODE_MATCH(mode, target) (mode & target)
+#define FILTER_MODE_COMPOUND_MATCH(mode, A, B) FILTER_MODE_MATCH(mode, A) && FILTER_MODE_MATCH(mode, B)
 
 #define TRUE 1
 #define FALSE 0
