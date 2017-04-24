@@ -52,8 +52,8 @@ struct cmd_struct *get_builtin(const char *s)
     return NULL;
 }
 
-static int arg_id(int argc, const char **argv, int i, unsigned int min, const char *desc);
-static int arg_aquire(int argc, const char **argv, int i, void **target);
+static int arg_int(int argc, const char **argv, int i, unsigned int min, const char *desc);
+static int arg_str(int argc, const char **argv, int i, char **target);
 
 void pfr_cmd_type_define(int argc, const char **argv)
 {
@@ -108,7 +108,7 @@ void pfr_cmd_type_undefine(int argc, const char **argv)
         if (type_name == NULL && *argv[i] != '-')
         {
             filter_mode |= FILTER_MODE_TYPE_NAME_EQUALS;
-            if (!arg_aquire(argc, argv, i, (void **) &type_name))
+            if (!arg_str(argc, argv, i, &type_name))
                 return;
         }
         
@@ -116,7 +116,7 @@ void pfr_cmd_type_undefine(int argc, const char **argv)
         {
             filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
             
-            type_id = arg_id(argc, argv, ++i, 1, "type");
+            type_id = arg_int(argc, argv, ++i, 1, "type");
             
             if (type_id == -1)
                 return;
@@ -177,7 +177,7 @@ void pfr_cmd_type_show(int argc, const char **argv)
             }
             
             // try to get the type-id value
-            type_id_filter = arg_id(argc, argv, ++i, 1, "type");
+            type_id_filter = arg_int(argc, argv, ++i, 1, "type");
             if (type_id_filter == -1)
                 return;
         }
@@ -217,7 +217,7 @@ void pfr_cmd_type_show(int argc, const char **argv)
                 return;
             }
             
-            if (!arg_aquire(argc, argv, ++i, (void**) &type_name_filter))
+            if (!arg_str(argc, argv, ++i, &type_name_filter))
                 return;
         }
     }
@@ -246,7 +246,7 @@ void pfr_cmd_detail_new(int argc, const char **argv)
     int         profile_id  = 0;
     int         type_id     = 0;
     char        *type_name  = NULL;
-    signed char *value      = NULL;
+    char        *value      = NULL;
     
     // for checking if the type exists
     struct pfr_type type            = {0};
@@ -266,7 +266,7 @@ void pfr_cmd_detail_new(int argc, const char **argv)
     {
         if (profile_id == 0 && !strcmp(argv[i], "--profile-id"))
         {
-            profile_id = arg_id(argc, argv, ++i, 1, "profile");
+            profile_id = arg_int(argc, argv, ++i, 1, "profile");
             if (profile_id == -1)
                 return;
         }
@@ -274,7 +274,7 @@ void pfr_cmd_detail_new(int argc, const char **argv)
         else if (type_id == 0 && !strcmp(argv[i], "--type-id"))
         {
             filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
-            type_id = arg_id(argc, argv, ++i, 1, "type");
+            type_id = arg_int(argc, argv, ++i, 1, "type");
             if (type_id == -1)
                 return;
         }
@@ -288,13 +288,13 @@ void pfr_cmd_detail_new(int argc, const char **argv)
         else if (type_id == 0 && type_name == NULL)
         {
             filter_mode |= FILTER_MODE_TYPE_NAME_EQUALS;
-            if (!arg_aquire(argc, argv, i, (void **) &type_name))
+            if (!arg_str(argc, argv, i, &type_name))
                 return;
         }
         
         else if (value == NULL)
         {
-            if (!arg_aquire(argc, argv, i, (void **) &value))
+            if (!arg_str(argc, argv, i, &value))
                 return;
         }
         
@@ -372,7 +372,7 @@ void pfr_cmd_help(int argc __attribute__((unused)), const char **argv)
 
 
 // attempts to get an id number from argv[i]
-static int arg_id(int argc, const char **argv, int i, unsigned int min, const char *desc)
+static int arg_int(int argc, const char **argv, int i, unsigned int min, const char *desc)
 {
     unsigned int id_number;
     
@@ -392,7 +392,7 @@ static int arg_id(int argc, const char **argv, int i, unsigned int min, const ch
 }
 
 // attempts to allocate and set the value of argv[i] for later use
-static int arg_aquire(int argc, const char **argv, int i, void **target)
+static int arg_str(int argc, const char **argv, int i, char **target)
 {
     if (i >= argc) {
         printf("Error: not enough arguments\n");
@@ -408,6 +408,7 @@ static int arg_aquire(int argc, const char **argv, int i, void **target)
     }
     
     strncpy(*target, argv[i], argl);
+    (*target)[argl] = '\0';
     
     return 1;
 }
