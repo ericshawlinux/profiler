@@ -320,15 +320,13 @@ void pfr_cmd_detail_new(int argc, const char **argv)
     // if no profile id is specified we need to get the next profile id
     // then get the next detail id for that profile id
     if (profile_id > 0)
-    {
         detail.profile_id = profile_id;
-        detail.detail_id = 1;
-    }
     else
-    {
         detail.profile_id = pfr_detail_get_next_profile_id();
-        detail.detail_id = pfr_detail_get_next_detail_id(detail.profile_id);
-    }
+
+    detail.detail_id = pfr_detail_get_next_detail_id(detail.profile_id);
+    
+    detail.bsize = strlen(value) + 1;
     
     pfr_detail_save(&detail, value);
     
