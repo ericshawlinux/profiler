@@ -21,11 +21,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <pfr_cmd.h>
-#include <pfr_type.h>
-#include <pfr_usage.h>
-#include <pfr_list.h>
-#include <pfr_filter.h>
+#include "pfr_cmd.h"
+#include "pfr_type.h"
+#include "pfr_usage.h"
+#include "pfr_list.h"
+#include "pfr_filter.h"
 
 #define DATA_TYPE_SIZE 7
 

@@ -18,11 +18,11 @@
  * 
  */
 
-#include <pfr_filter.h>
-#include <pfr_list.h>
-#include <pfr_files.h>
-#include <pfr_type.h>
-#include <pfr_detail.h>
+#include "pfr_filter.h"
+#include "pfr_list.h"
+#include "pfr_files.h"
+#include "pfr_type.h"
+#include "pfr_detail.h"
 
 #include <stdio.h>
 #include <malloc.h>

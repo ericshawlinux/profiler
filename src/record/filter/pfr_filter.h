@@ -22,9 +22,9 @@
 #ifndef PFR_FILTER_DEFINED
 #define PFR_FILTER_DEFINED
 
-#include <pfr_list.h>
-#include <pfr_type.h>
-#include <pfr_detail.h>
+#include "pfr_list.h"
+#include "pfr_type.h"
+#include "pfr_detail.h"
 
 
 // The following modes affect both type and detail filtering

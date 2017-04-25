@@ -19,9 +19,10 @@
  */
 
 #include <stdlib.h>
-#include <pfr_usage.h>
-#include <pfr_cmd.h>
-#include <pfr_files.h>
+
+#include "pfr_usage.h"
+#include "pfr_cmd.h"
+#include "pfr_files.h"
 
 int main(int argc, const char **argv)
 {    

@@ -22,9 +22,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <pfr_type.h>
-#include <pfr_files.h>
-#include <pfr_disk.h>
+#include "pfr_type.h"
+#include "pfr_files.h"
+#include "pfr_disk.h"
 
 static int pfr_type_get_state(int *next_id, int *name_exists, const char *name);
 static int pfr_type_write(FILE *fd, const struct pfr_type type, const char *name);

@@ -21,8 +21,8 @@
 #ifndef PFR_LIST_DEFINED
 #define PFR_LIST_DEFINED
 
-#include <pfr_type.h>
-#include <pfr_detail.h>
+#include "pfr_type.h"
+#include "pfr_detail.h"
 
 struct node {
     int                 has_type    :1;

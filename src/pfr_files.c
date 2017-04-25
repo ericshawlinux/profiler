@@ -22,10 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef __linux__
+#include <unistd.h>
 #include <pwd.h>
 #elif defined _WIN32
 #include <windows.h>
@@ -33,7 +33,7 @@
 #error "Platform not supported"
 #endif
 
-#include <pfr_files.h>
+#include "pfr_files.h"
 
 /* Paths to data files, which need initialized. */
 char    *detail_file_path       = NULL,

@@ -22,9 +22,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <pfr_detail.h>
-#include <pfr_files.h>
-#include <pfr_disk.h>
+#include "pfr_detail.h"
+#include "pfr_files.h"
+#include "pfr_disk.h"
 
 static int pfr_detail_write(FILE *, struct pfr_detail source, const void *value);
 static int profile_match(struct pfr_detail a, struct pfr_detail b);
