@@ -340,18 +340,157 @@ void pfr_cmd_detail_update(int argc __attribute__((unused)), const char **argv _
     
 }
 
-void pfr_cmd_detail_get(int argc __attribute__((unused)), const char **argv __attribute__((unused)))
+void pfr_cmd_detail_get(int argc, const char **argv)
 {
-    list *all_details = pfr_detail_filter((struct pfr_type){0},"",(struct pfr_detail){0},"",0);
-    struct node *current = all_details;
-
-    printf("%d\n", list_size(all_details));
-
-    printf("profile-id  detail-id  type-id  type-name  data-type  bytes\n");
+    int     profile_id   = 0;
+    int     detail_id    = 0;
+    int     type_id      = 0;
+    char    data_type    = 0;
+    char    *type_name   = NULL;
+    char    *value       = NULL;
+    int     filter_mode  = 0;
     
-    while(current!=NULL)
+    int i;
+    for (i = 2; i < argc; i++)
     {
-        printf("%d    %d    %d    %s    %c    %s\n",
+        if (profile_id == 0 && str_starts_with(argv[i], "--profile-id"))
+        {
+            if (!strcmp(argv[i], "--profile-id-lte"))
+                filter_mode |= (FILTER_MODE_PROFILE_ID_LESS_THAN | FILTER_MODE_PROFILE_ID_EQUALS);
+            
+            else if (!strcmp(argv[i], "--profile-id-gte"))
+                filter_mode |= FILTER_MODE_PROFILE_ID_GRTR_THAN | FILTER_MODE_PROFILE_ID_EQUALS;
+            
+            else if (!strcmp(argv[i], "--profile-id-lt"))
+                filter_mode |= FILTER_MODE_PROFILE_ID_LESS_THAN;
+            
+            else if (!strcmp(argv[i], "--profile-id-gt"))
+                filter_mode |= FILTER_MODE_PROFILE_ID_GRTR_THAN;
+            
+            else if (!strcmp(argv[i], "--profile-id"))
+                filter_mode |= FILTER_MODE_PROFILE_ID_EQUALS;
+            else {
+                printf("unrecognized option %s\n", argv[i]);
+                return;
+            }
+            
+            // try to get the profile-id value
+            profile_id = arg_int(argc, argv, ++i, 1, "profile");
+            if (profile_id == -1)
+                return;
+        }
+        else if (detail_id == 0 && str_starts_with(argv[i], "--detail-id"))
+        {
+            if (!strcmp(argv[i], "--detail-id-lte"))
+                filter_mode |= (FILTER_MODE_DETAIL_ID_LESS_THAN | FILTER_MODE_DETAIL_ID_EQUALS);
+            
+            else if (!strcmp(argv[i], "--detail-id-gte"))
+                filter_mode |= FILTER_MODE_DETAIL_ID_GRTR_THAN | FILTER_MODE_DETAIL_ID_EQUALS;
+            
+            else if (!strcmp(argv[i], "--detail-id-lt"))
+                filter_mode |= FILTER_MODE_DETAIL_ID_LESS_THAN;
+            
+            else if (!strcmp(argv[i], "--detail-id-gt"))
+                filter_mode |= FILTER_MODE_DETAIL_ID_GRTR_THAN;
+            
+            else if (!strcmp(argv[i], "--detail-id"))
+                filter_mode |= FILTER_MODE_DETAIL_ID_EQUALS;
+            else {
+                printf("unrecognized option %s\n", argv[i]);
+                return;
+            }
+            
+            // try to get the detail-id value
+            detail_id = arg_int(argc, argv, ++i, 1, "detail");
+            if (detail_id == -1)
+                return;
+        }
+        else if (type_id == 0 && str_starts_with(argv[i], "--type-id"))
+        {
+            if (!strcmp(argv[i], "--type-id-lte"))
+                filter_mode |= (FILTER_MODE_TYPE_ID_LESS_THAN | FILTER_MODE_TYPE_ID_EQUALS);
+            
+            else if (!strcmp(argv[i], "--type-id-gte"))
+                filter_mode |= FILTER_MODE_TYPE_ID_GRTR_THAN | FILTER_MODE_TYPE_ID_EQUALS;
+            
+            else if (!strcmp(argv[i], "--type-id-lt"))
+                filter_mode |= FILTER_MODE_TYPE_ID_LESS_THAN;
+            
+            else if (!strcmp(argv[i], "--type-id-gt"))
+                filter_mode |= FILTER_MODE_TYPE_ID_GRTR_THAN;
+            
+            else if (!strcmp(argv[i], "--type-id"))
+                filter_mode |= FILTER_MODE_TYPE_ID_EQUALS;
+            else {
+                printf("unrecognized option %s\n", argv[i]);
+                return;
+            }
+            
+            // try to get the type-id value
+            type_id = arg_int(argc, argv, ++i, 1, "type");
+            if (type_id == -1)
+                return;
+        }
+        else if (data_type == 0 && str_starts_with(argv[i], "--data-type"))
+        {
+            i++;
+            
+            if (!strcmp("date", argv[i]))
+                data_type = 'd';
+                
+            else if (!strcmp("number", argv[i]))
+                data_type = 'n';
+                
+            else if (!strcmp("text", argv[i]))
+                data_type = 't';
+            
+            else {
+                printf("unrecognized data-type filter %s\n", argv[i]);
+                return;
+            }
+            
+            filter_mode |= FILTER_MODE_DATA_TYPE_EQUALS;
+        }
+        else if (type_name == NULL && str_starts_with(argv[i], "--type-name"))
+        {
+            if (!strcmp(argv[i], "--type-name")) {
+                filter_mode |= FILTER_MODE_TYPE_NAME_EQUALS;
+            }
+            else if (!strcmp(argv[i], "--type-name-contains")) {
+                filter_mode |= FILTER_MODE_TYPE_NAME_CONTAINS;
+            }
+            else if (!strcmp(argv[i], "--type-name-starts-with")) {
+                filter_mode |= FILTER_MODE_TYPE_NAME_STARTS_WITH;
+            }
+            else {
+                printf("unrecognized type-name filter: %s\n", argv[i]);
+                return;
+            }
+            
+            if (!arg_str(argc, argv, ++i, &type_name))
+                return;
+        }
+        
+        // TODO: detail value filters here
+    }
+    
+    struct pfr_type type_search = {
+        .type_id = type_id,
+        .data_type = data_type,
+    };
+    
+    struct pfr_detail detail_search = {
+        .profile_id = profile_id,
+        .detail_id  = detail_id,
+        .type_id    = type_id,
+    };
+    
+    list *search_results = pfr_detail_filter(type_search, type_name, detail_search, value, filter_mode);
+    struct node *current = search_results;
+    
+    while (current != NULL)
+    {
+        printf("%d %d %d %s %c %s\n",
             current->detail.profile_id,
             current->detail.detail_id,
             current->detail.type_id,
@@ -361,6 +500,10 @@ void pfr_cmd_detail_get(int argc __attribute__((unused)), const char **argv __at
         );
         current = current->next;
     }
+    
+    free(type_name);
+    free(value);
+    free_list(search_results);
 }
 
 void pfr_cmd_help(int argc __attribute__((unused)), const char **argv)

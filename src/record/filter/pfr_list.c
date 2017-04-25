@@ -30,7 +30,7 @@ void prepend_list(
     struct pfr_type     type,
     char                *type_name,
     struct pfr_detail   detail,
-    void                *detail_value
+    char                *detail_value
 )
 {
     list *new = malloc(sizeof (struct node));

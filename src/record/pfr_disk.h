@@ -21,7 +21,7 @@
 #ifndef PFR_DISK_DEFINED
 #define PFR_DISK_DEFINED
 
-int pfr_disk_read(FILE *fp, void *target_struct, int target_size, void **flex_value, const int *flex_size, const char *err_id);
-int pfr_disk_write(FILE *fp, const void *source_struct, int source_size, const void *flex_value, int flex_size, const char *err_id);
+int pfr_disk_read(FILE *fp, void *target_struct, int target_size, char **flex_value, int *flex_size, const char *err_id);
+int pfr_disk_write(FILE *fp, const void *source_struct, int source_size, const char *flex_value, int flex_size, const char *err_id);
 
 #endif // pfr_disk.h included

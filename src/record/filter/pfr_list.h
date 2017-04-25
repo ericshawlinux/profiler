@@ -30,7 +30,7 @@ struct node {
     struct pfr_type     type;
     char                *type_name;
     struct pfr_detail   detail;
-    void                *detail_value;
+    char                *detail_value;
     struct node         *next;
 };
 
@@ -43,7 +43,7 @@ void prepend_list(
     struct pfr_type     type,
     char                *type_name,
     struct pfr_detail   detail,
-    void                *detail_value
+    char                *detail_value
 );
 
 void free_list(list *head);

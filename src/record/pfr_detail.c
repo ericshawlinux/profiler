@@ -26,7 +26,7 @@
 #include "pfr_files.h"
 #include "pfr_disk.h"
 
-static int pfr_detail_write(FILE *, struct pfr_detail source, const void *value);
+static int pfr_detail_write(FILE *, struct pfr_detail source, const char *value);
 static int profile_match(struct pfr_detail a, struct pfr_detail b);
 
 int pfr_detail_get_next_profile_id()
@@ -41,7 +41,7 @@ int pfr_detail_get_next_profile_id()
     }
     
     struct pfr_detail current = {0};
-    void *current_value = NULL;
+    char *current_value = NULL;
     
     while (pfr_detail_read(fp, &current, &current_value))
     {
@@ -66,7 +66,7 @@ int pfr_detail_get_next_detail_id(int profile_id)
     }
     
     struct pfr_detail current = {0};
-    void *current_value = NULL;
+    char *current_value = NULL;
     
     while (pfr_detail_read(fp, &current, &current_value))
     {
@@ -79,7 +79,7 @@ int pfr_detail_get_next_detail_id(int profile_id)
     return next_id;
 }
 
-int pfr_detail_save(struct pfr_detail *detail, const void *value)
+int pfr_detail_save(struct pfr_detail *detail, const char *value)
 {
     FILE *fp = fopen(detail_file_path, "ab");
     
@@ -108,7 +108,7 @@ int pfr_detail_delete(struct pfr_detail detail)
     }
 
     struct pfr_detail current_detail;
-    void *current_value = NULL;
+    char *current_value = NULL;
     
     while (pfr_detail_read(origin, &current_detail, &current_value))
     {
@@ -134,12 +134,12 @@ int pfr_detail_delete(struct pfr_detail detail)
     return 1;
 }
 
-int pfr_detail_read(FILE *fp, struct pfr_detail *target, void **value)
+int pfr_detail_read(FILE *fp, struct pfr_detail *target, char **value)
 {
     return pfr_disk_read(fp, target, sizeof *target, value, &(target->bsize), "detail");
 }
 
-static int pfr_detail_write(FILE *fp, struct pfr_detail source, const void *value)
+static int pfr_detail_write(FILE *fp, struct pfr_detail source, const char *value)
 {
     return pfr_disk_write(fp, &source, sizeof source, value, source.bsize, "detail");
 }

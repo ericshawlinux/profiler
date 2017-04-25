@@ -33,9 +33,9 @@ struct pfr_detail {
 int pfr_detail_get_next_profile_id();
 int pfr_detail_get_next_detail_id(int profile_id);
 
-int pfr_detail_save(struct pfr_detail *detail, const void *value);
+int pfr_detail_save(struct pfr_detail *detail, const char *value);
 int pfr_detail_delete(struct pfr_detail);
 
-int pfr_detail_read(FILE *, struct pfr_detail *target, void **value);
+int pfr_detail_read(FILE *, struct pfr_detail *target, char **value);
 
 #endif // pfr_detail.h included

@@ -78,7 +78,7 @@ list *pfr_detail_filter(
     struct pfr_type     type_search,
     const char          *type_name,
     struct pfr_detail   detail_search,
-    void                *value,
+    const char          *value,
     int                 filter_mode
 );
 

@@ -38,9 +38,9 @@ static int pfr_type_matches_filter(
 
 static int pfr_detail_matches_filter(
     struct pfr_detail   a,
-    void                *a_value,
+    const char          *a_value,
     struct pfr_detail   b,
-    void                *b_value,
+    const char          *b_value,
     int                 filter_mode
 );
 
@@ -88,12 +88,12 @@ struct pfr_type pfr_type_load(int in_type_id, char **out_type_name)
 }
 
 list *pfr_detail_filter(struct pfr_type type_search, const char *type_name,
-                        struct pfr_detail detail_search, void *detail_value, int filter_mode)
+                        struct pfr_detail detail_search, const char *detail_value, int filter_mode)
 {
     list *matching_details = NULL;
     
     struct pfr_detail   current         = {0};
-    void                *current_value  = NULL;
+    char                *current_value  = NULL;
     struct pfr_type     current_type    = {0};
     char                *current_name   = NULL;
     
@@ -182,11 +182,12 @@ static int pfr_type_matches_filter(struct pfr_type a, const char *a_name,
     return TRUE;
 }
 
-static int pfr_detail_matches_filter(struct pfr_detail a, void *a_value,
-                                     struct pfr_detail b, void *b_value, int filter_mode)
+static int pfr_detail_matches_filter(struct pfr_detail a, const char *a_value,
+                                     struct pfr_detail b, const char *b_value, int filter_mode)
 {
-    long a_value_copy = *((long*)a_value);
-    long b_value_copy = *((long*)b_value);
+    // temporary.. need to convert string to long
+    long a_value_copy = 0;
+    long b_value_copy = 0;
     
     /** Profile ID Filters ************************************/
 

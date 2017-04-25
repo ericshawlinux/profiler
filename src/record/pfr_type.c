@@ -135,10 +135,10 @@ static int pfr_type_get_state(int *next_id, int *name_exists, const char *name)
 
 int pfr_type_read(FILE *fp, struct pfr_type *target, char **name)
 {
-    return pfr_disk_read(fp, target, sizeof *target, (void **) name, &(target->nsize), "type");
+    return pfr_disk_read(fp, target, sizeof *target, name, &(target->nsize), "type");
 }
 
 static int pfr_type_write(FILE *fp, struct pfr_type source, const char *name)
 {
-    return pfr_disk_write(fp, &source, sizeof source, (void **) name, source.nsize, "type");
+    return pfr_disk_write(fp, &source, sizeof source, name, source.nsize, "type");
 }
