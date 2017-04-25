@@ -29,6 +29,9 @@ int pfr_disk_read(FILE *fp, void *target_struct, int target_size, void **flex_va
     
     read_size_a = fread(target_struct, 1, target_size, fp);
     
+    if (read_size_a == 0)
+        return 0; // no error
+    
     if (read_size_a != target_size) {
         fprintf(stderr, "Error reading %s structure data: %s\n", err_id, strerror(errno));
         return 0;
