@@ -310,12 +310,12 @@ void pfr_cmd_detail_new(int argc, const char **argv)
     
     matching_types = pfr_type_filter(type, type_name, filter_mode);
     
-    detail.type_id = matching_types->type.type_id;
-    
     if (matching_types == NULL) {
         printf("error: the specified type was not found.\n");
         return;
     }
+    
+    detail.type_id = matching_types->type.type_id;
     
     // if no profile id is specified we need to get the next profile id
     // then get the next detail id for that profile id
@@ -515,7 +515,7 @@ void pfr_cmd_help(int argc __attribute__((unused)), const char **argv)
 // attempts to get an id number from argv[i]
 static int arg_int(int argc, const char **argv, int i, unsigned int min, const char *desc)
 {
-    unsigned int id_number;
+    int id_number;
     
     if (i >= argc) {
         printf("error: no %s id specified\n", desc);
@@ -524,7 +524,7 @@ static int arg_int(int argc, const char **argv, int i, unsigned int min, const c
 
     id_number = strtol(argv[i], NULL, 10);
 
-    if (id_number < min) {
+    if (id_number < (signed) min) {
         printf("error: invalid %s id number\n", desc);
         return -1;
     }
