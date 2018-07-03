@@ -124,6 +124,15 @@ static char *get_file_path(char *file_name)
     return path;
 }
 
+__attribute__((destructor))
+static void free_paths()
+{
+    free(detail_file_path);
+    free(tmp_detail_file_path);
+    free(type_file_path);
+    free(tmp_type_file_path);
+}
+
 static void concat_path(char **current, char *path)
 {
     *current = realloc(*current, strlen(*current) + strlen(path) + PATH_SEPARATOR_LENGTH + 1);

@@ -549,7 +549,7 @@ static int arg_str(int argc, const char **argv, int i, char **target)
     }
     
     strncpy(*target, argv[i], argl);
-    (*target)[argl] = '\0';
+    (*target)[argl - 1] = '\0';
     
     return 1;
 }

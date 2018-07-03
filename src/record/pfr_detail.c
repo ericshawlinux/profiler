@@ -48,6 +48,9 @@ int pfr_detail_get_next_profile_id()
         if (current.profile_id >= next_id) {
             next_id = current.profile_id + 1;
         }
+        
+        free(current_value);
+        current_value = NULL;
     }
 
     fclose(fp);
@@ -73,6 +76,9 @@ int pfr_detail_get_next_detail_id(int profile_id)
         if (current.profile_id == profile_id && current.detail_id >= next_id) {
             next_id = current.detail_id + 1;
         }
+        
+        free(current_value);
+        current_value = NULL;
     }
 
     fclose(fp);

@@ -1,5 +1,5 @@
 CC       := gcc
-CFLAGS   := -Wall -Wextra
+CFLAGS   := -Wall -Wextra -g
 INCLUDES := -I./include
 OBJECTS  := obj/pfr_files.o obj/pfr_cmd.o obj/pfr_usage.o obj/pfr_disk.o obj/pfr_list.o obj/pfr_type.o obj/pfr_detail.o obj/pfr_filter.o obj/main.o
 EXENAME  := profiler
